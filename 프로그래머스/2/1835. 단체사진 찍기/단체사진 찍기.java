@@ -1,62 +1,50 @@
-import java.util.*;
 class Solution {
-    static char [] friends;
-    static String [] dt;
-    static int answer;
-    static boolean [] visited;
+    static String[] man = {"A", "C", "F", "J", "M", "N", "R", "T"};
+    static String[] bucket;
+    static boolean[] v;
+    static int target;
     public int solution(int n, String[] data) {
-        dt = data;
-        answer = 0;
-        friends = new char[]{'A', 'C', 'F', 'J', 'M', 'N', 'R', 'T'};
-        visited = new boolean[8];
-
-        dfs("",0);
-        return answer;
+        int answer = 0;
+        target = 0;
+        v = new boolean[man.length];
+        bucket = data.clone();
+        per(0, "");
+        return target;
     }
-    static void dfs(String line, int depth)
-    {
-        if(depth == 8)
-        {
-            if(check(line)) answer++;
+    
+    public static void per(int idx, String sel) {
+        if(idx == man.length) {
+            if(check(sel)) target++;
             return;
         }
 
-        // depth -> 자리(인덱스) , i -> 프렌즈
-        for(int i = 0; i < 8; ++i)
-        {
-            //아직 줄을 서지 않은 프렌즈면 세우고 재귀
-            if(!visited[i])
-            {
-                visited[i] = true;
-                dfs(line+friends[i],depth+1);
-                visited[i] = false;
+        for (int i = 0; i < man.length; i++) {
+            if(!v[i]) {
+                v[i]=true;
+                per(idx+1, sel+man[i]);
+                v[i]=false;
             }
         }
     }
-    static boolean check(String line)
-    {
-        //"N~F=0", "R~T<2"
-        for(String cond : dt)
-        {
-            //둘사이의 거리
-            int diff = (Math.abs(line.indexOf(cond.charAt(0)) - line.indexOf(cond.charAt(2))))-1;
-            char sign = cond.charAt(3);
-            int val = cond.charAt(4)-'0';
 
-            if(sign == '=')
-            {
-                if(diff != val) return false;
-            }
-            else if(sign == '>')
-            {
-                if(diff <= val) return false;
-            }
-            else
-            {
-                if(diff >= val) return false;
+    public static boolean check(String sel) {
+        for (String s : bucket) {
+
+            int a = sel.indexOf(s.charAt(0));
+            int b = sel.indexOf(s.charAt(2));
+
+            switch (s.charAt(3)) {
+                case '=':
+                    if (Math.abs(a - b) - 1 != s.charAt(4)-'0') return false;
+                    break;
+                case '>':
+                    if (Math.abs(a - b) - 1 <= s.charAt(4)-'0') return false;
+                    break;
+                case '<':
+                    if (Math.abs(a - b) - 1 >= s.charAt(4)-'0') return false;
+                    break;
             }
         }
-        //걸리지지 않았다면 true
         return true;
     }
 }
