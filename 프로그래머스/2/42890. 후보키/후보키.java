@@ -1,65 +1,78 @@
 import java.util.*;
+import java.io.*;
 
 class Solution {
-    List<String> candi = new ArrayList<>();
+    static int row, column, answer;
+    static ArrayList<ArrayList<Integer>> candidate = new ArrayList<ArrayList<Integer>>();
+    static boolean sel[];
 
     public int solution(String[][] relation) {
-        int answer = 0;
+        answer = 0;
 
-        for (int i = 0; i < relation[0].length; i++) {
-            boolean[] visited = new boolean[relation[0].length];
-            dfs(visited, 0, 0, i + 1, relation);
-        }
-        answer = candi.size();
+        row = relation.length;
+        column = relation[0].length;
+        sel = new boolean[column];
+
+        DFS(0, relation);
+
         return answer;
     }
 
-    public void dfs(boolean[] visited, int start, int depth, int end, String[][] relation) {
-        if (depth == end) {
-            List<Integer> list = new ArrayList<>();
-            String key = "";
-            for (int i = 0; i < visited.length; i++) {
-                if (visited[i]) {
-                    key += String.valueOf(i);
-                    list.add(i);
+    public static void DFS(int idx, String[][] relation) {
+        if (idx == column) {
+            // 유일성 확인
+            if (!uniqueness(relation)) return;
+            // 최소성 확인
+            if (!minimality()) return;
+
+            candidate.add(new ArrayList<Integer>());
+            for (int i = 0; i < column; i++) {
+                if (sel[i]) {
+                    candidate.get(candidate.size() - 1).add(i);
                 }
             }
 
-            Map<String, Integer> map = new HashMap<>();
-
-            for (int i = 0; i < relation.length; i++) {
-                String s = "";
-                for (Integer j : list) {
-                    s += relation[i][j];
-                }
-
-                if (map.containsKey(s)) {
-                    return;
-                } else {
-                    map.put(s, 0);
-                }
-            }
-
-            for (String s : candi) { 
-                int count = 0;
-                for(int i = 0; i < key.length(); i++){
-                    String subS = String.valueOf(key.charAt(i));
-                    if(s.contains(subS)) count++;
-                }
-                if (count == s.length()) return;
-            }
-            candi.add(key);
-
+            answer++;
             return;
         }
+        sel[idx] = false;
+        DFS(idx + 1, relation);
+        sel[idx] = true;
+        DFS(idx + 1, relation);
+    }
 
-        for (int i = start; i < visited.length; i++) {
-            if (visited[i]) continue;
-
-            visited[i] = true;
-            dfs(visited, i, depth + 1, end, relation);
-            visited[i] = false;
+    // 유일성 확인
+    public static boolean uniqueness(String[][] relation) {
+        Set<String> set = new HashSet<>();
+        for (int i = 0; i < row; i++) {
+            StringBuilder sb = new StringBuilder();
+            for (int j = 0; j < column; j++) {
+                if (sel[j]) {
+                    sb.append(relation[i][j]).append(" ");
+                }
+            }
+            String key = sb.toString();
+            if (!set.add(key)) {
+                return false;
+            }
         }
+        return true;
+    }
 
+    // 최소성 확인
+    public static boolean minimality() {
+        // 1개는 반드시 최소성을 만족한다!
+        if (candidate.size() == 0) return true;
+
+        for (ArrayList<Integer> tmp : candidate) {
+            int pos = 0;
+            for (int i = 0; i < tmp.size(); i++) {
+                if (sel[tmp.get(i)]) pos++;
+            }
+            // 최소성을 만족하지 못한다 !
+            if (pos == tmp.size()) return false;
+        }
+        // 최소성을 만족한다 !
+        return true;
     }
 }
