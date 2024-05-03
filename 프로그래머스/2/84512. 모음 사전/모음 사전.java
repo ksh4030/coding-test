@@ -1,32 +1,32 @@
 import java.util.*;
+
 class Solution {
+    static String[] arr = {"A", "E", "I", "O", "U"};
     static List<String> list;
-    static String[] arr;
     
     public int solution(String word) {
         int answer = 0;
-        arr = new String[]{"A", "E", "I", "O", "U"};
         list = new ArrayList<>();
+        recur("");
         
-        recur("", 0);
-
-        for (int i = 1; i < list.size(); i++) {
-            if(word.equals(list.get(i))) {
+        for(int i=0; i<list.size(); i++) {
+            if(list.get(i).equals(word)) {
                 answer = i;
+                break;
             }
-        }
+        }       
+        
         return answer;
     }
     
-    public static void recur(String cur, int cnt) {
-        list.add(cur);
-
-        if(cnt == 5) {
+    public void recur(String s) {
+        list.add(s);        
+        if(s.length() == 5) {
             return;
         }
-
-        for (int i = 0; i < arr.length; i++) {
-            recur(cur+arr[i], cnt+1);
+        
+        for(int i=0; i<arr.length; i++) {
+            recur(s+arr[i]);
         }
-    }
+    } 
 }
