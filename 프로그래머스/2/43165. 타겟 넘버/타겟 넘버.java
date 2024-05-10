@@ -5,9 +5,7 @@ class Solution {
         answer = 0;
         t = target;
         int sum = 0;
-        
         dfs(numbers, 0, 0);
-        
         return answer;
     }
     
@@ -16,13 +14,9 @@ class Solution {
             if(sum == t) {
                 answer++;
             }
-            
             return;
         }
-        
         dfs(numbers, idx+1, sum + numbers[idx]);
         dfs(numbers, idx+1, sum - numbers[idx]);
     }
-    
-    
 }
