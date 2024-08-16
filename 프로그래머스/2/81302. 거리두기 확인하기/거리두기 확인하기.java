@@ -1,58 +1,66 @@
-import java.util.Arrays;
+import java.util.*;
+
 class Solution {
-    static String[][] map;
-    static boolean[][] v;
-    static boolean flag;
-    static int[] dr = {1,0,-1,0};
-    static int[] dc = {0,-1,0,1};
+    static int[] dr = {-1, 0, 1, 0};
+    static int[] dc = {0, -1, 0, 1};
+
     public int[] solution(String[][] places) {
+        int[] answer = new int[places.length];
         
-        int[] answer = new int[5];
-
-        for (int i = 0; i < 5; i++) {
-            flag = false;
-            map = new String[5][5];
-            for (int j = 0; j < map[i].length; j++) {
-                map[j] = places[i][j].split("");
+        for (int i = 0; i < places.length; i++) {
+            if (checkMap(places[i])) {
+                answer[i] = 1;
+            } else {
+                answer[i] = 0;
             }
-
-            loop:
-            for (int j = 0; j < 5; j++) {
-                for (int k = 0; k < 5; k++) {
-                    if(map[j][k].equals("P")) {
-                        v = new boolean[5][5];
-                        dfs(0, j, k);
-                        if(flag) {
-                            break loop;
-                        }
-                    }
-                }
-            }
-            answer[i] = flag ? 0 : 1;
         }
+        
         return answer;
     }
     
-    public static void dfs(int depth, int r, int c) {
-        if (depth >= 2) {
-            return;
-        }
-        v[r][c] = true;
-        for (int i = 0; i < 4; i++) {
-            int nr = r+dr[i];
-            int nc = c+dc[i];
-
-            if (nr < 0 || nr >= 5 || nc < 0 || nc >= 5 || v[nr][nc]) continue;
-
-            if (map[nr][nc].equals("O")) dfs(depth+1, nr, nc);
-
-            else if (map[nr][nc].equals("P")) {
-                flag = true;
-                return;
-            }
-            else if (map[nr][nc].equals("X")) {
-                continue;
+    public boolean checkMap(String[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr[i].length(); j++) {
+                if (arr[i].charAt(j) == 'P') {
+                    if (!bfs(i, j, arr)) {
+                        return false;
+                    }
+                }
             }
         }
+        return true;
+    }
+    
+    public boolean bfs(int r, int c, String[] map) {
+        Queue<int[]> q = new LinkedList<>();
+        boolean[][] visited = new boolean[map.length][map[0].length()];
+        q.add(new int[]{r, c, 0});
+        visited[r][c] = true;
+        
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int cr = cur[0];
+            int cc = cur[1];
+            int distance = cur[2];
+            
+            if (distance > 0 && distance <= 2 && map[cr].charAt(cc) == 'P') {
+                return false;
+            }
+            
+            if (distance >= 2) continue;
+            
+            for (int i = 0; i < 4; i++) {
+                int nr = cr + dr[i];
+                int nc = cc + dc[i];
+                
+                if (nr < 0 || nc < 0 || nr >= map.length || nc >= map[0].length() || visited[nr][nc]) continue;
+                if (map[nr].charAt(nc) == 'X') continue;
+                
+                visited[nr][nc] = true;
+                q.add(new int[]{nr, nc, distance + 1});
+            }
+        }
+        
+        return true;
     }
 }
