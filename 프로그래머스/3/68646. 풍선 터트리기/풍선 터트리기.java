@@ -1,25 +1,33 @@
 import java.util.*;
+
 class Solution {
     public int solution(int[] a) {
-        int answer = 2;
+        int n = a.length;
+        if (n < 3) return n;
         
-        if(a.length < 3) return a.length;
-        int[] left = new int[a.length];
-        int[] right = new int[a.length];
+        int[] leftMin = new int[n];
+        int[] rightMin = new int[n];
         
-        int min = a[0];
-        for(int i=1; i<left.length-1; i++) {
-            if(min > a[i]) min = a[i];            
-            left[i] = min;            
+        leftMin[0] = a[0];
+        rightMin[n-1] = a[n-1];
+        
+        // 왼쪽에서 오른쪽으로 최소값 저장
+        for (int i = 1; i < n; i++) {
+            leftMin[i] = Math.min(leftMin[i-1], a[i]);
         }
-        min = a[a.length-1];
-        for(int i=right.length-2; i>0; i--) {
-            if(min > a[i]) min = a[i];
-            right[i] = min;
-        }        
-        for(int i=1; i<a.length-1; i++) {
-            if(a[i] > left[i] && a[i] > right[i]) continue;
-            answer++;
+        
+        // 오른쪽에서 왼쪽으로 최소값 저장
+        for (int i = n-2; i >= 0; i--) {
+            rightMin[i] = Math.min(rightMin[i+1], a[i]);
+        }
+        
+        int answer = 2; // 양 끝의 풍선은 남을 수 있음
+        
+        // 중간의 풍선이 남을 수 있는지 확인
+        for (int i = 1; i < n-1; i++) {
+            if (a[i] <= leftMin[i-1] || a[i] <= rightMin[i+1]) {
+                answer++;
+            }
         }
         
         return answer;
