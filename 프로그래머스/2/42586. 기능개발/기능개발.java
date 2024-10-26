@@ -1,27 +1,32 @@
 import java.util.*;
-
 class Solution {
-    public int[] solution(int[] progresses, int[] speeds) {        
-        Queue<Integer> q = new LinkedList<>();
-        List<Integer> list = new ArrayList<>();
+    public int[] solution(int[] progresses, int[] speeds) {
+        List<Integer> list = new ArrayList<>();        
         
+        Queue<Node> q = new LinkedList<>();
         for(int i=0; i<progresses.length; i++) {
-            int n = (100-progresses[i]) % speeds[i] > 0 ? (100-progresses[i]) / speeds[i] + 1 : (100-progresses[i]) / speeds[i];
-            q.add(n);
+            q.add(new Node(progresses[i], speeds[i]));
         }
         
         while(!q.isEmpty()) {
-            int n = 1;
-            int cur = q.poll();
-            while(true) {
-                if(!q.isEmpty() && q.peek() <= cur) {
-                    n++;
+            int size = q.size();
+            int cnt = 0;
+            for(int i=0; i<size; i++) {
+                Node cur = q.poll();
+                cur = new Node(cur.prog+cur.speed, cur.speed);
+                q.add(cur);
+            }
+            
+            for(int i=0; i<size; i++) {
+                if(q.peek().prog >= 100) {
                     q.poll();
+                    cnt++;
                 } else {
                     break;
                 }
             }
-            list.add(n);
+            
+            if(cnt > 0) list.add(cnt);
         }
         
         int[] answer = new int[list.size()];
@@ -29,5 +34,13 @@ class Solution {
             answer[i] = list.get(i);
         }
         return answer;
+    }
+    
+    class Node {
+        int prog, speed;
+        public Node(int prog, int speed) {
+            this.prog = prog;
+            this.speed = speed;
+        }
     }
 }
