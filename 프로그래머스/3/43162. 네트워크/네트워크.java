@@ -1,32 +1,27 @@
-import java.util.*;
-
 class Solution {
-
+    static int[][] map;
+    static boolean[] v;
     public int solution(int n, int[][] computers) {
-        int cnt = 0;
-        boolean[] visited = new boolean[n];
-
-        for(int i = 0; i < n; i++) {
-            if(!visited[i]) {
-                bfs(computers, visited, i);
-                cnt++;
+        int answer = 0;
+        
+        map = computers;
+        v = new boolean[n];
+        
+        for(int i=0; i<n; i++) {
+            if(!v[i]) {
+                dfs(i);
+                answer++;
             }
         }
-        return cnt;
+        return answer;
     }
     
-    private void bfs(int[][] computers, boolean[] visited, int v) {
-        Queue<Integer> queue = new LinkedList<>();
-        visited[v] = true;
-        queue.add(v);
-
-        while(!queue.isEmpty()) {
-            Integer w = queue.poll();
-            for(int i = 0; i < computers.length; i++) {
-                if(computers[w][i] == 1 && !visited[i]) {
-                    visited[i] = true;
-                    queue.add(i);
-                }
+    public void dfs(int idx) {
+        v[idx] = true;
+        
+        for(int i=0; i<map.length; i++) {
+            if(map[idx][i] == 1 && !v[i]) {
+                dfs(i);
             }
         }
     }
