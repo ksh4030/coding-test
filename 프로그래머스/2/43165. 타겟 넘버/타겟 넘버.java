@@ -1,22 +1,19 @@
+import java.util.*;
 class Solution {
     static int answer;
-    static int t;
     public int solution(int[] numbers, int target) {
         answer = 0;
-        t = target;
-        int sum = 0;
-        dfs(numbers, 0, 0);
+        back(numbers, target, 0, 0);
         return answer;
     }
     
-    public void dfs(int[] numbers, int idx, int sum) {
-        if(idx == numbers.length) {
-            if(sum == t) {
-                answer++;
-            }
+    public void back(int[] numbers, int target, int sum, int idx) {
+        if(idx >= numbers.length) {
+            if(sum == target) answer++;
             return;
         }
-        dfs(numbers, idx+1, sum + numbers[idx]);
-        dfs(numbers, idx+1, sum - numbers[idx]);
+        
+        back(numbers, target, sum + numbers[idx], idx+1);
+        back(numbers, target, sum - numbers[idx], idx+1);
     }
 }
