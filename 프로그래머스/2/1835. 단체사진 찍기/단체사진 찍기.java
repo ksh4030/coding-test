@@ -1,50 +1,60 @@
+import java.util.*;
+
 class Solution {
-    static String[] man = {"A", "C", "F", "J", "M", "N", "R", "T"};
-    static String[] bucket;
-    static boolean[] v;
-    static int target;
-    public int solution(int n, String[] data) {
-        int answer = 0;
-        target = 0;
-        v = new boolean[man.length];
-        bucket = data.clone();
-        per(0, "");
-        return target;
+    private static int answer;
+    private static final String[] characters = {"A", "C", "F", "J", "M", "N", "R", "T"};
+    private static boolean[] visited = new boolean[8];
+
+    public int solution(int n, String[] conditions) {
+        answer = 0;
+        findPermutations(0, new String[8], conditions);
+        return answer;
     }
-    
-    public static void per(int idx, String sel) {
-        if(idx == man.length) {
-            if(check(sel)) target++;
+
+    private static void findPermutations(int depth, String[] arrangement, String[] conditions) {
+        if (depth == arrangement.length) {
+            Map<String, Integer> positionMap = new HashMap<>();
+            for (int i = 0; i < arrangement.length; i++) {
+                positionMap.put(arrangement[i], i);
+            }
+            if (isValid(positionMap, conditions)) {
+                answer++;
+            }
             return;
         }
 
-        for (int i = 0; i < man.length; i++) {
-            if(!v[i]) {
-                v[i]=true;
-                per(idx+1, sel+man[i]);
-                v[i]=false;
+        for (int i = 0; i < characters.length; i++) {
+            if (!visited[i]) {
+                visited[i] = true;
+                arrangement[depth] = characters[i];
+                findPermutations(depth + 1, arrangement, conditions);
+                visited[i] = false;
             }
         }
     }
 
-    public static boolean check(String sel) {
-        for (String s : bucket) {
+    private static boolean isValid(Map<String, Integer> positionMap, String[] conditions) {
+        for (String condition : conditions) {
+            String first = condition.substring(0, 1);
+            String second = condition.substring(2, 3);
+            char op = condition.charAt(3);
+            int distance = condition.charAt(4) - '0';
 
-            int a = sel.indexOf(s.charAt(0));
-            int b = sel.indexOf(s.charAt(2));
+            int actualDistance = Math.abs(positionMap.get(first) - positionMap.get(second)) - 1;
 
-            switch (s.charAt(3)) {
-                case '=':
-                    if (Math.abs(a - b) - 1 != s.charAt(4)-'0') return false;
-                    break;
-                case '>':
-                    if (Math.abs(a - b) - 1 <= s.charAt(4)-'0') return false;
-                    break;
-                case '<':
-                    if (Math.abs(a - b) - 1 >= s.charAt(4)-'0') return false;
-                    break;
+            if (!checkCondition(actualDistance, distance, op)) {
+                return false;
             }
         }
         return true;
+    }
+
+    private static boolean checkCondition(int actual, int required, char op) {
+        switch (op) {
+            case '=': return actual == required;
+            case '<': return actual < required;
+            case '>': return actual > required;
+            default: return false;
+        }
     }
 }
