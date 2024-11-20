@@ -1,31 +1,37 @@
 import java.util.*;
-class Solution {
-        static boolean[] v;
-    static PriorityQueue<Integer> list;
-    public int solution(int[] cards) {
-        int answer = 0;
-        v = new boolean[cards.length];
-        list = new PriorityQueue<>(Collections.reverseOrder());
 
+class Solution {
+    public int solution(int[] cards) {
+        boolean[] visit = new boolean[cards.length];
+        List<Integer> groupSizes = new ArrayList<>();
+
+        // 각 그룹의 크기를 계산
         for (int i = 0; i < cards.length; i++) {
-            if(!v[i]) {
-                dfs(1,i, 0, cards);
+            if (!visit[i]) {
+                groupSizes.add(dfs(cards, i, visit));
             }
         }
-        if(list.size() != 1) return list.poll() * list.poll();
-        return 0;
-        
+
+        // 그룹 크기 내림차순 정렬
+        Collections.sort(groupSizes, Collections.reverseOrder());
+
+        // 상위 두 그룹 크기의 곱 계산
+        if (groupSizes.size() < 2) {
+            return 0; // 그룹이 하나라면 점수는 0
+        } else {
+            return groupSizes.get(0) * groupSizes.get(1);
+        }
     }
-    
-        public static void dfs(int depth, int i, int cnt, int[] cards) {
-        if(v[i]) {
-            list.add(cnt);
-            if(depth == v.length) {
-                list.add(0);
-            }
-            return;
+
+    private int dfs(int[] cards, int idx, boolean[] visit) {
+        int count = 0;
+
+        while (!visit[idx]) {
+            visit[idx] = true;
+            idx = cards[idx] - 1; // 다음 상자 이동
+            count++;
         }
-        v[i] = true;
-        dfs(0,cards[i]-1, cnt+1, cards);
+
+        return count;
     }
 }
