@@ -1,83 +1,65 @@
 import java.util.*;
+
 class Solution {
-        static int[] dr = {-1, 0, 1, 0};
+    static int[] dr = {-1, 0, 1, 0};
     static int[] dc = {0, 1, 0, -1};
     static char[][] map;
-    static boolean[][] v;
-    static int[][] arr;
-    static Map<Character, Integer> hashmap;
+    static boolean[][] visited;
+    static Map<Character, Integer> regionSize;
+
     public int solution(int[][] land) {
         int answer = 0;
-        arr = land.clone();
-        map = new char[land.length][land[0].length];
-        v = new boolean[land.length][land[0].length];
-        hashmap = new HashMap<>();
-
-        char c = 'A';
-        for (int i = 0; i < land.length; i++) {
-            for (int j = 0; j < land[i].length; j++) {
-                if(land[i][j] == 1 && !v[i][j]) {
-                    makeMap(new Node(i,j), c);
-                    c = (char)(c+1);
+        int rows = land.length, cols = land[0].length;
+        map = new char[rows][cols];
+        visited = new boolean[rows][cols];
+        regionSize = new HashMap<>();
+        
+        char region = 'A';
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (land[i][j] == 1 && !visited[i][j]) {
+                    markRegion(i, j, region++, land);
                 }
             }
         }
 
-        for (int i = 0; i < map[0].length; i++) {
-            Set<Character> set = new HashSet<>();
-            int sum = 0;
-            for (int j = 0; j < map.length; j++) {
-                if (map[j][i] < 65) continue;
-                set.add(map[j][i]);
+        for (int col = 0; col < cols; col++) {
+            Set<Character> uniqueRegions = new HashSet<>();
+            for (int row = 0; row < rows; row++) {
+                if (map[row][col] >= 'A') {
+                    uniqueRegions.add(map[row][col]);
+                }
             }
-
-            for (char a : set) {
-                sum += hashmap.get(a);
-            }
+            int sum = uniqueRegions.stream().mapToInt(regionSize::get).sum();
             answer = Math.max(answer, sum);
         }
         return answer;
     }
-    
-    public static void makeMap(Node node, char c) {
-        Queue<Node> q = new LinkedList<>();
-        List<Node> list = new ArrayList<>();
-        q.add(node);
-        list.add(node);
-        int cnt = 1;
 
-        while (!q.isEmpty()) {
-            Node cur = q.poll();
-            v[cur.r][cur.c] = true;
-            for (int i = 0; i < 4; i++) {
-                int nr = cur.r + dr[i];
-                int nc = cur.c + dc[i];
+    private void markRegion(int startRow, int startCol, char region, int[][] land) {
+        Queue<int[]> queue = new LinkedList<>();
+        List<int[]> cells = new ArrayList<>();
+        queue.add(new int[]{startRow, startCol});
+        visited[startRow][startCol] = true;
+        int size = 0;
 
-                try {
-                    if(arr[nr][nc]==1 && !v[nr][nc]) {
-                        v[nr][nc] = true;
-                        q.add(new Node(nr, nc));
-                        list.add(new Node(nr, nc));
-                        cnt++;
-                    }
-                } catch (Exception e) {
-                    continue;
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            int r = current[0], c = current[1];
+            map[r][c] = region;
+            size++;
+            cells.add(current);
+
+            for (int d = 0; d < 4; d++) {
+                int nr = r + dr[d], nc = c + dc[d];
+                if (nr >= 0 && nr < land.length && nc >= 0 && nc < land[0].length 
+                    && land[nr][nc] == 1 && !visited[nr][nc]) {
+                    visited[nr][nc] = true;
+                    queue.add(new int[]{nr, nc});
                 }
             }
         }
 
-        hashmap.put(c, cnt);
-        for (Node n : list) {
-            map[n.r][n.c] = c;
-        }
-
-    }
-
-    public static class Node {
-        int r, c;
-        public Node(int r, int c) {
-            this.r = r;
-            this.c = c;
-        }
+        regionSize.put(region, size);
     }
 }
