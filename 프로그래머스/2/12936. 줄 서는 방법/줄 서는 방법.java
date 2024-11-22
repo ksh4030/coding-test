@@ -4,17 +4,17 @@ public class Solution {
     public int[] solution(int n, long k) {
         int[] answer = new int[n];
         List<Integer> list = new ArrayList<>();
-        long f = 1;
+        long factorialNum = 1;
         for(int i=1; i<=n; i++) {
             list.add(i);
-            f *= i;
+            factorialNum *= i;
         }
-        k--; 
+        k--; //배열은 0부터 시작
         int idx = 0;
         while(idx < n) {
-            f /= n - idx;
-            answer[idx++] = list.remove((int) (k / f));
-            k %= f;
+            factorialNum /= n - idx;
+            answer[idx++] = list.remove((int) (k / factorialNum));
+            k %= factorialNum;
         }
 
         return answer;
