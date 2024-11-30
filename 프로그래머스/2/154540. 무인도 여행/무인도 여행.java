@@ -1,77 +1,72 @@
 import java.util.*;
 class Solution {
-    static int[] dr = {-1, 0, 1, 0};
-    static int[] dc = {0, 1, 0, -1};
+    static int[] dr = {-1, 1, 0, 0};
+    static int[] dc = {0, 0, -1 ,1};
     static boolean[][] v;
-    static String[][] arr;
-    static List<Integer> list;
-    static int n;
+    static int[][] map;
+
     public int[] solution(String[] maps) {
-        arr = new String[maps.length][maps[0].length()];
-        v = new boolean[arr.length][arr[0].length];
-        list = new ArrayList<>();
-
-        for (int i = 0; i < maps.length; i++) {
-            arr[i] = maps[i].split("");
-        }
-
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[0].length; j++) {
-                if(!arr[i][j].equals("X") && !v[i][j]) {
-                    n = 0;
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        v = new boolean[maps.length][maps[0].length()];
+        makeMap(maps);        
+        
+        for(int i=0; i<map.length; i++) {
+            for(int j=0; j<map[0].length; j++) {
+                if(map[i][j] > 0 && !v[i][j]) {
                     v[i][j] = true;
-                    n += Integer.parseInt(arr[i][j]);
-                    search(new Node(i,j));
+                    int n = bfs(new Pos(i,j));
+                    if(n > 0) pq.add(n);                    
                 }
             }
         }
         
-        if(list.size() == 0) {
-            int[] answer = {-1};
-            return answer;
-        }
-
-        int[] answer = new int[list.size()];
-        for (int i = 0; i < answer.length; i++) {
-            answer[i] = list.get(i);
-        }
-
-        Arrays.sort(answer);
-        return answer;
+        int[] answer = new int[pq.size()];
+        for(int i=0; i<answer.length; i++) answer[i] = pq.poll();
+        return answer.length == 0 ? new int[]{-1} : answer;
     }
     
-    public static void search(Node node) {
-        Queue<Node> q = new LinkedList<>();
-        q.add(node);
-        while (!q.isEmpty()) {
-            Node cur = q.poll();
-            int r = cur.r;
-            int c = cur.c;
-
-            for (int i = 0; i < 4; i++) {
-                int nr = dr[i] + r;
-                int nc = dc[i] + c;
-
+    public int bfs(Pos pos) {
+        Queue<Pos> q = new LinkedList<>();
+        q.add(pos);
+        int sum = map[pos.r][pos.c];
+        
+        while(!q.isEmpty()) {
+            Pos cur = q.poll();
+            for(int i=0; i<4; i++) {
+                int nr = cur.r + dr[i];
+                int nc = cur.c + dc[i];
+                
+                if(nr<0 || nc<0 || nr>=map.length || nc>=map[0].length || v[nr][nc] || map[nr][nc] == 0) continue;
+                v[nr][nc] = true;
+                sum += map[nr][nc];
+                q.add(new Pos(nr, nc));
+            }
+        }
+        
+        return sum;
+    }
+    
+    public void makeMap(String[] maps) {
+        map = new int[maps.length][maps[0].length()];
+        
+        for(int i=0; i<map.length; i++) {
+            String[] arr = maps[i].split("");
+            for(int j=0; j<map[0].length; j++) {
                 try {
-                    if(!arr[nr][nc].equals("X") && !v[nr][nc]) {
-                        q.add(new Node(nr, nc));
-                        n += Integer.parseInt(arr[nr][nc]);
-                        v[nr][nc] = true;
-                    }
-                } catch (Exception e) {
-                    continue;
+                    int n = Integer.parseInt(arr[j]);
+                    map[i][j] = n;
+                } catch (NumberFormatException e) {
+                    map[i][j] = 0;
                 }
             }
         }
-        list.add(n);
     }
     
-    public static class Node {
-        int r;
-        int c;
-        public Node(int r, int c) {
+    class Pos{
+        int r, c;
+        public Pos(int r, int c) {
             this.r = r;
-            this.c = c;
+            this.c = c;            
         }
     }
 }
