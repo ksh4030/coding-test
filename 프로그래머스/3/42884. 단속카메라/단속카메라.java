@@ -1,8 +1,11 @@
 import java.util.*;
 class Solution {
     public int solution(int[][] routes) {
-        int answer = 1;
-        Arrays.sort(routes, (o1, o2) -> o1[1] - o2[1]);
+        int answer = 0;
+        
+        Arrays.sort(routes, (o1, o2) -> {
+            return o1[1] - o2[1];
+        });
         
         int cur = routes[0][1];
         
@@ -13,6 +16,6 @@ class Solution {
             }
         }
         
-        return answer;
+        return answer+1;
     }
 }
