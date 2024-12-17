@@ -1,75 +1,55 @@
 import java.util.*;
-
 class Solution {
-    static int[] dr = {-1, 0, 1, 0}; // 상, 우, 하, 좌
-    static int[] dc = {0, 1, 0, -1};
-    
-    static int[][][] map;
-    static boolean[][][] v;
-    
+    static int[] dr = {-1, 0, 1, 0};
+    static int[] dc = {0, -1, 0, 1};
+    static int[][][] cost;
     public int solution(int[][] board) {
-        int answer = Integer.MAX_VALUE;
-        int n = board.length;
+        int answer = 0;
+        cost = new int[board.length][board[0].length][4];
         
-        map = new int[n][n][4];
-        v = new boolean[n][n][4];
-        
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                Arrays.fill(map[i][j], Integer.MAX_VALUE);
+        for(int[][] a : cost) {
+            for(int[] b : a) {
+                Arrays.fill(b, Integer.MAX_VALUE);
             }
         }
         
-        bfs(board);        
-        for (int i = 0; i < 4; i++) {
-            answer = Math.min(answer, map[n-1][n-1][i]);
-        }
-        
-        return answer;
+        return bfs(board);
     }
     
-    public static void bfs(int[][] board) {
-        Queue<Node> q = new LinkedList<>();
-        int n = board.length;
+    public int bfs(int[][] board) {
+        Queue<Pos> q = new LinkedList<>();
+        q.add(new Pos(0,0,0,-1));
+        cost[0][0][0] = 0;
         
-        if (board[0][1] == 0) {
-            q.add(new Node(0, 1, 1));
-            map[0][1][1] = 100;
-            v[0][1][1] = true;
-        }
-        if (board[1][0] == 0) {
-            q.add(new Node(1, 0, 2));
-            map[1][0][2] = 100;
-            v[1][0][2] = true;
-        }
-        
-        while (!q.isEmpty()) {
-            Node cur = q.poll();
+        while(!q.isEmpty()) {
+            Pos cur = q.poll();
             
-            for (int i = 0; i < 4; i++) {
+            for(int i=0; i<4; i++) {
                 int nr = cur.r + dr[i];
                 int nc = cur.c + dc[i];
                 
-                if (nr < 0 || nc < 0 || nr >= n || nc >= n || board[nr][nc] == 1) continue;
-                
-                int cost = map[cur.r][cur.c][cur.dist];
-                cost += (cur.dist == i) ? 100 : 600;
-              
-                if (cost < map[nr][nc][i]) {
-                    map[nr][nc][i] = cost;
-                    v[nr][nc][i] = true;
-                    q.add(new Node(nr, nc, i));
+                if(nr<0 || nc<0 || nr>=board.length || nc>=board[0].length || board[nr][nc]==1) continue;
+                int newCost = cur.cost + (cur.dir==i || cur.dir==-1 ? 100 : 600);
+                if(cost[nr][nc][i] > newCost) {
+                    cost[nr][nc][i] = newCost;
+                    q.add(new Pos(nr, nc, newCost, i));
                 }
             }
         }
+        int n = Integer.MAX_VALUE;
+        for(int i=0; i<4; i++){
+            n = Math.min(n, cost[board.length-1][board[0].length-1][i]);
+        }
+        return n;
     }
     
-    static class Node {
-        int r, c, dist;
-        public Node(int r, int c, int dist) {
+    class Pos{
+        int r, c, cost, dir;
+        public Pos(int r, int c, int cost, int dir) {
             this.r = r;
             this.c = c;
-            this.dist = dist;
+            this.cost = cost;
+            this.dir = dir;
         }
     }
 }
