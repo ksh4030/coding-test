@@ -1,34 +1,54 @@
 import java.util.*;
 
 class Solution {
-    public int[] solution(String today, String[] terms, String[] privacies) {        
-        List<Integer> list = new ArrayList<>();
+    static HashMap<String, Integer> map = new HashMap<>();
+    static List<Integer> list = new ArrayList<>();
+    
+    public int[] solution(String today, String[] terms, String[] privacies) {
+        int todayTime = StringToInt(today);
+        makeMap(terms);
+        checkPossible(todayTime, privacies);
         
-        int todayInt = changeDate(today);
-        
-        for(int i=0; i<privacies.length; i++) {
-            String[] bucket = privacies[i].split(" ");
-            int curDate = changeDate(bucket[0]);
-            for(int j=0; j<terms.length; j++) {
-                String[] arr = terms[j].split(" ");
-                if(arr[0].equals(bucket[1])) {
-                    curDate += Integer.parseInt(arr[1]) * 28;
-                }
-            }
-            
-            if(todayInt >= curDate) {
-                list.add(i+1);
-            }
-        }
         int[] answer = new int[list.size()];
-        for(int i=0; i<answer.length; i++) {
+        for(int i=0; i<list.size(); i++) {
             answer[i] = list.get(i);
         }
+        
         return answer;
     }
     
-    public static int changeDate(String s) {
-        String[] dateArr = s.split("\\.");
-        return Integer.parseInt(dateArr[0])*12*28 + Integer.parseInt(dateArr[1])*28 + Integer.parseInt(dateArr[2]);
+    public void checkPossible(int todayTime, String[] privacies) {
+        for(int i=0; i<privacies.length; i++) {
+            String[] arr = privacies[i].split(" ");
+            int curTime = StringToInt(arr[0]);
+            String curKind = arr[1];
+            
+            if(isPossible(curTime, todayTime, curKind)) list.add(i+1);
+        }
+    }
+    
+    public boolean isPossible(int curTime, int todayTime, String curKind) {
+        if(todayTime - curTime >= map.get(curKind)) return true;
+        return false;
+    }
+    
+    public void makeMap(String[] terms) {
+        for(String s : terms) {
+            String[] arr = s.split(" ");
+            
+            int time = Integer.parseInt(arr[1]) * 28;
+            map.put(arr[0], time);
+        }
+    }
+    
+    public int StringToInt(String s) {
+        String[] arr = s.split("\\.");
+        int n = 0;
+        
+        n += Integer.parseInt(arr[0]) * 12 * 28;
+        n += Integer.parseInt(arr[1]) * 28;
+        n += Integer.parseInt(arr[2]);
+        
+        return n;
     }
 }
