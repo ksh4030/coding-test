@@ -1,22 +1,24 @@
 import java.util.*;
 class Solution {
     boolean solution(String s) {
+        boolean answer = true;
+
+        if(s.charAt(0) == ')' || s.charAt(s.length()-1) == '(') return false;
         Stack<Character> stack = new Stack<>();
-        int open = 0;
-        int close = 0;
         
         for(int i=0; i<s.length(); i++) {
-            if(s.charAt(i) == '(') {
-                stack.add('(');
-                open++;
+            if(s.charAt(i) == ')') {
+                if(!stack.isEmpty() && stack.peek() == '(') {
+                    stack.pop();
+                } else {
+                    return false;
+                }
             } else {
-                if(stack.isEmpty()) return false;
-                stack.pop();
-                close++;
+                stack.add('(');
             }
-            if(close > open) return false;
         }
-
-        return close == open;
+        
+        if(!stack.isEmpty())return false;
+        return answer;
     }
 }
