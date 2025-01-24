@@ -1,90 +1,69 @@
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
+    static int N, L;
+    static int[][] map;
 
-    public static boolean isValidPath(int[] path, int L) {
-        int n = path.length;
-        boolean[] used = new boolean[n]; // 경사로 설치 여부 확인
+    public static void main(String[] args) throws IOException {
+        init();
+        System.out.println(checkMap());
+    }
 
-        for (int i = 0; i < n - 1; i++) {
-            if (path[i] == path[i + 1]) {
-                continue; // 높이가 같으면 진행
+    public static int checkMap() {
+        int cnt = 0;
+
+        for(int[] row : map) {
+            if(isPossible(row)) cnt++;
+        }
+
+        for(int i=0; i<N; i++) {
+            int[] col = new int[N];
+            for(int j=0; j<N; j++) {
+                col[j] = map[j][i];
             }
+            if(isPossible(col)) cnt++;
+        }
 
-            if (Math.abs(path[i] - path[i + 1]) > 1) {
-                return false; // 높이 차이가 1보다 크면 경사로 설치 불가
-            }
+        return cnt;
+    }
 
-            if (path[i] < path[i + 1]) { // 오르막 경사로 설치
-                if (i - L + 1 < 0) { // 범위를 벗어나는 경우
-                    return false;
-                }
-                for (int j = i - L + 1; j <= i; j++) {
-                    if (path[j] != path[i] || used[j]) {
-                        return false;
-                    }
-                }
-                for (int j = i - L + 1; j <= i; j++) {
-                    used[j] = true;
-                }
-            } else { // 내리막 경사로 설치
-                if (i + L >= n) { // 범위를 벗어나는 경우
-                    return false;
-                }
-                for (int j = i + 1; j <= i + L; j++) {
-                    if (path[j] != path[i + 1] || used[j]) {
-                        return false;
-                    }
-                }
-                for (int j = i + 1; j <= i + L; j++) {
-                    used[j] = true;
-                }
+    public static boolean isPossible(int[] arr) {
+        boolean[] used = new boolean[N];
+
+        for(int i=0; i<N - 1; i++) {
+            if(arr[i] == arr[i+1]) continue;
+            if(Math.abs(arr[i] - arr[i+1]) > 1) return false;
+
+            if(arr[i] < arr[i+1]) {
+                if(i - L  + 1 < 0) return false;
+                for(int j=i-L+1; j<=i; j++) if(arr[j] != arr[i] || used[j]) return false;
+                for(int j=i-L+1; j<=i; j++) used[j] = true;
+            } else {
+                if(i+L >= N) return false;
+                for(int j=i+1; j<=i+L; j++) if(arr[j] != arr[i+1] || used[j]) return false;
+                for (int j=i+1; j<=i+L; j++) used[j] = true;
             }
         }
 
         return true;
     }
 
-    public static int countValidPaths(int[][] grid, int L) {
-        int n = grid.length;
-        int count = 0;
+    public static void init() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        // 행 검사
-        for (int[] row : grid) {
-            if (isValidPath(row, L)) {
-                count++;
-            }
-        }
+        N = Integer.parseInt(st.nextToken());
+        L = Integer.parseInt(st.nextToken());
 
-        // 열 검사
-        for (int col = 0; col < n; col++) {
-            int[] column = new int[n];
-            for (int row = 0; row < n; row++) {
-                column[row] = grid[row][col];
-            }
-            if (isValidPath(column, L)) {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        int N = scanner.nextInt();
-        int L = scanner.nextInt();
-        int[][] grid = new int[N][N];
-
+        map = new int[N][N];
         for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
             for (int j = 0; j < N; j++) {
-                grid[i][j] = scanner.nextInt();
+                map[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-
-        System.out.println(countValidPaths(grid, L));
-
-        scanner.close();
     }
 }
