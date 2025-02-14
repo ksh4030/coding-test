@@ -1,10 +1,5 @@
--- 코드를 입력하세요
-SELECT animal_id, animal_type, name
-from animal_ins
-where sex_upon_intake like '%Intact%' and
-animal_id in (
-    select animal_id
-    from animal_outs
-    where sex_upon_outcome like '%Spayed%' or sex_upon_outcome like '%Neutered%'
-)
-order by animal_id;
+select a.animal_id, a.animal_type, a.name
+from animal_ins a
+join animal_outs b on a.animal_id = b.animal_id
+where a.sex_upon_intake like 'Intact%' and (b.sex_upon_outcome like 'Neutered%' or b.sex_upon_outcome like 'Spayed%')
+order by animal_id
