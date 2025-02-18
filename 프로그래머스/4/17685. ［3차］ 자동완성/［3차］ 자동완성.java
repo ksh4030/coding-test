@@ -1,44 +1,51 @@
 import java.util.*;
 
 class Solution {
-    public static int compare3(String word1, String target, String word2) {
-        for (int i = 1; i <= target.length(); i++) {
-            if (i == target.length()) {
-                return target.length();
-            }
-            if (!target.substring(0, i).equals(word1.substring(0, Math.min(i, word1.length()))) &&
-                !target.substring(0, i).equals(word2.substring(0, Math.min(i, word2.length())))) {
-                return i;
-            }
-        }
-        return target.length();
+    static class TrieNode {
+        Map<Character, TrieNode> children = new HashMap<>();
+        int count = 0;  // 해당 노드를 지나간 단어의 개수
     }
 
-    public static int compare2(String word1, String target) {
-        for (int i = 1; i <= target.length(); i++) {
-            if (i == target.length()) {
-                return target.length();
-            }
-            if (!target.substring(0, i).equals(word1.substring(0, Math.min(i, word1.length())))) {
-                return i;
+    static class Trie {
+        TrieNode root = new TrieNode();
+
+        // 단어 삽입
+        void insert(String word) {
+            TrieNode node = root;
+            for (char c : word.toCharArray()) {
+                node.children.putIfAbsent(c, new TrieNode());
+                node = node.children.get(c);
+                node.count++;  // 현재 노드를 지나간 단어의 개수 증가
             }
         }
-        return target.length();
+
+        // 단어를 입력할 때 몇 글자까지 입력해야 하는지 계산
+        int getTypingCount(String word) {
+            TrieNode node = root;
+            int typingCount = 0;
+            for (char c : word.toCharArray()) {
+                node = node.children.get(c);
+                typingCount++;
+                if (node.count == 1) break;  // 단어가 유일해지는 순간 종료
+            }
+            return typingCount;
+        }
     }
 
-    public static int solution(String[] words) {
-        Arrays.sort(words);
+    public int solution(String[] words) {
+        Trie trie = new Trie();
         int answer = 0;
 
-        for (int i = 0; i < words.length; i++) {
-            if (i == 0) {
-                answer += compare2(words[i + 1], words[i]);
-            } else if (i == words.length - 1) {
-                answer += compare2(words[i - 1], words[i]);
-            } else {
-                answer += compare3(words[i - 1], words[i], words[i + 1]);
-            }
+        // Trie에 단어 삽입
+        for (String word : words) {
+            trie.insert(word);
         }
+
+        // 각 단어가 몇 글자까지 입력해야 하는지 계산
+        for (String word : words) {
+            answer += trie.getTypingCount(word);
+        }
+
         return answer;
     }
 }
