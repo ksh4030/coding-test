@@ -1,27 +1,26 @@
 class Solution {
-    static int[][] map;
     static boolean[] v;
     public int solution(int n, int[][] computers) {
         int answer = 0;
-        
-        map = computers;
         v = new boolean[n];
         
         for(int i=0; i<n; i++) {
             if(!v[i]) {
-                dfs(i);
+                v[i] = true;
+                bfs(n, i, computers);
                 answer++;
             }
         }
+        
         return answer;
     }
     
-    public void dfs(int idx) {
-        v[idx] = true;
+    public void bfs(int n, int cur, int[][] computers) {
+        v[cur] = true;
         
-        for(int i=0; i<map.length; i++) {
-            if(map[idx][i] == 1 && !v[i]) {
-                dfs(i);
+        for(int i=0; i<n; i++) {
+            if(computers[cur][i] == 1 && !v[i]) {
+                bfs(n, i, computers);
             }
         }
     }
