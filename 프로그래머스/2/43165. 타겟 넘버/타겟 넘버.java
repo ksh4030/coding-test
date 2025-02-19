@@ -1,19 +1,21 @@
 import java.util.*;
 class Solution {
-    static int answer;
+    static int cnt = 0;
     public int solution(int[] numbers, int target) {
-        answer = 0;
-        back(numbers, target, 0, 0);
-        return answer;
+        int answer = 0;
+        
+        bt(0, 0, numbers, target, 0);
+        
+        return cnt;
     }
     
-    public void back(int[] numbers, int target, int sum, int idx) {
-        if(idx >= numbers.length) {
-            if(sum == target) answer++;
+    public static void bt(int depth, int idx, int[] numbers, int target, int sum) {
+        if(depth == numbers.length) {
+            if(sum == target) cnt++;
             return;
         }
         
-        back(numbers, target, sum + numbers[idx], idx+1);
-        back(numbers, target, sum - numbers[idx], idx+1);
+        bt(depth+1, idx+1, numbers, target, sum + numbers[idx]);
+        bt(depth+1, idx+1, numbers, target, sum - numbers[idx]);
     }
 }
