@@ -1,51 +1,53 @@
 import java.util.*;
 class Solution {
-    static List<Integer>[] graph;
+    static boolean[][] board;
     public int solution(int n, int[][] wires) {
-        int answer = Integer.MAX_VALUE;
-
-         graph = new ArrayList[n+1];
-
-        for (int i = 0; i < graph.length; i++) {
-            graph[i] = new ArrayList<>();
-        }
-
-        for (int i = 0; i < wires.length; i++) {
-            int x = wires[i][0];
-            int y = wires[i][1];
-
-            graph[x].add(y);
-            graph[y].add(x);
-        }
-
-        for (int i = 0; i < wires.length; i++) {
-            int x = wires[i][0];
-            int y = wires[i][1];
-
-            graph[x].remove(Integer.valueOf(y));
-            graph[y].remove(Integer.valueOf(x));
-            boolean[] v = new boolean[n+1];
-
-            int cnt = dfs(1, v);
-
-            int num = Math.abs(cnt - (n - cnt));
-            answer = Math.min(answer, num);
-
-            graph[x].add(y);
-            graph[y].add(x);
-        }
-        return answer;
+        int answer = -1;
+        makeBoard(n, wires);
+        return divide(n, wires);
     }
     
-    static int dfs(int n, boolean[] v) {
-        v[n] = true;
+    public int divide(int n, int[][] wires) {
+        int ans = Integer.MAX_VALUE;
+        for(int[] arr : wires) {
+            board[arr[0]][arr[1]] = false;
+            board[arr[1]][arr[0]] = false;
+            
+            int cnt = bfs(n);
+            ans = Math.min(Math.abs(n - 2*cnt), ans);
+            
+            board[arr[0]][arr[1]] = true;
+            board[arr[1]][arr[0]] = true;
+        }
+        return ans;
+    }
+    
+    public int bfs(int n) {
         int cnt = 1;
-
-        for (int next : graph[n]) {
-            if (!v[next]) {
-                cnt += dfs(next, v);
+        boolean[] v = new boolean[n+1];
+        Queue<Integer> q = new LinkedList<>();
+        q.add(1);
+        v[1] = true;
+        
+        while(!q.isEmpty()) {
+            int cur = q.poll();
+            for(int i=1; i<=n; i++) {
+                if(board[cur][i] && !v[i]) {
+                    q.add(i);
+                    v[i] = true;
+                    cnt++;
+                }
             }
         }
+        
         return cnt;
+    }
+    
+    public void makeBoard(int n, int[][] wires) {
+        board = new boolean[n+1][n+1];
+        for(int[] arr : wires) {
+            board[arr[0]][arr[1]] = true;
+            board[arr[1]][arr[0]] = true;
+        }
     }
 }
