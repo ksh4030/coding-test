@@ -1,26 +1,26 @@
 import java.util.*;
 class Solution {
-    static List<String> list = new ArrayList<>();
     static boolean[] v;
+    static List<String> list = new ArrayList<>();
     public String[] solution(String[][] tickets) {
-        v = new boolean[tickets.length];
         
-        dfs(tickets, "ICN", "ICN", 0);
+        v = new boolean[tickets.length];
+        dfs(0, "ICN", "ICN", tickets);
         
         Collections.sort(list);
         return list.get(0).split(" ");
     }
     
-    public void dfs(String[][] tickets, String cur, String ans, int depth) {
+    public void dfs(int depth, String cur, String path, String[][] tickets) {
         if(depth == tickets.length) {
-            list.add(ans);
+            list.add(path);
             return;
         }
         
         for(int i=0; i<tickets.length; i++) {
-            if(!v[i] && cur.equals(tickets[i][0])) {
+            if(!v[i] && tickets[i][0].equals(cur)) {
                 v[i] = true;
-                dfs(tickets, tickets[i][1], ans+" "+tickets[i][1], depth+1);
+                dfs(depth+1, tickets[i][1], path + " " + tickets[i][1], tickets);
                 v[i] = false;
             }
         }
