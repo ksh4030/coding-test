@@ -1,6 +1,5 @@
--- 코드를 작성해주세요
-select count(a.fish_type) as fish_count, b.fish_name
-from fish_info a, fish_name_info b
-where a.fish_type = b.fish_type
-group by a.fish_type, b.fish_name
+select count(fi.id) as fish_count, fn.fish_name
+from fish_name_info fn
+join fish_info fi on fn.fish_type = fi.fish_type
+group by fn.fish_type, fn.fish_name
 order by fish_count desc;
