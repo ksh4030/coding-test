@@ -1,3 +1,4 @@
+import java.util.*;
 class Solution {
     static boolean[] v;
     public int solution(int n, int[][] computers) {
@@ -7,7 +8,7 @@ class Solution {
         for(int i=0; i<n; i++) {
             if(!v[i]) {
                 v[i] = true;
-                bfs(n, i, computers);
+                dfs(i, n, computers);
                 answer++;
             }
         }
@@ -15,12 +16,11 @@ class Solution {
         return answer;
     }
     
-    public void bfs(int n, int cur, int[][] computers) {
-        v[cur] = true;
-        
+    public void dfs(int cur, int n, int[][] computers) {
         for(int i=0; i<n; i++) {
-            if(computers[cur][i] == 1 && !v[i]) {
-                bfs(n, i, computers);
+            if(!v[i] && computers[cur][i] == 1) {
+                v[i] = true;
+                dfs(i, n, computers);
             }
         }
     }
