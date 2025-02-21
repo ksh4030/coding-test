@@ -1,4 +1,5 @@
 import java.util.*;
+
 class Solution {
     static boolean[] v;
     static int ans = Integer.MAX_VALUE;
@@ -13,7 +14,7 @@ class Solution {
     
     public void dfs(String cur, String target, String[] words, int cnt) {
         if(cur.equals(target)) {
-            ans = Math.min(cnt, ans);
+            ans = Math.min(ans, cnt);
             return;
         }
         
@@ -26,13 +27,14 @@ class Solution {
         }
     }
     
-    public boolean isPossible(String cur, String diff) {
-        int count = 0;
-        for (int i = 0; i < cur.length(); i++) {
-            if (cur.charAt(i) != diff.charAt(i)) {
-                count++;
+    public boolean isPossible(String s, String words) {
+        int cnt = 0;
+        for(int i=0; i<s.length(); i++) {
+            if(s.charAt(i) != words.charAt(i)) {
+                cnt++;
             }
         }
-        return count == 1; // 한 글자만 다를 경우 true 반환
+        
+        return cnt == 1;
     }
 }
