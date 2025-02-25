@@ -1,40 +1,42 @@
 import java.util.*;
 class Solution {
+    static Deque<Integer> dq = new ArrayDeque<>();
+    static PriorityQueue<Integer> pq = new PriorityQueue<>();
+    
     public int[] solution(String[] operations) {
         int[] answer = new int[2];
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
         
-        for(int i=0; i<operations.length; i++) {
-            String[] arr = operations[i].split(" ");
-            if(arr[0].equals("I")) {
-                pq.add(Integer.parseInt(arr[1]));
+        for(String s : operations) {
+            String[] bucket = s.split(" ");
+            if(bucket[0].equals("I")) {                
+                pq.add(Integer.parseInt(bucket[1]));
             } else {
-                if(!pq.isEmpty()) {
-                    if(arr[1].equals("-1")) {
-                        pq.poll();
-                    } else {
-                        PriorityQueue<Integer> bucket = new PriorityQueue<>();
-                        int len = pq.size();
-                        for(int j=0; j<len-1; j++) bucket.add(pq.poll());
-                        pq = bucket;
-                    }
+                if(bucket[1].equals("1") && !pq.isEmpty()) {
+                    while(!pq.isEmpty()) dq.addLast(pq.poll());
+                    dq.removeLast();
+                    while(!dq.isEmpty()) pq.add(dq.poll());
+                } else if(bucket[1].equals("-1") && !pq.isEmpty()) {
+                    while(!pq.isEmpty()) dq.addLast(pq.poll());
+                    dq.removeFirst();
+                    while(!dq.isEmpty()) pq.add(dq.poll());
                 }
             }
         }
         
-        // System.out.println(pq);
-        
-        if(pq.size() == 1) {            
+        if(pq.size() == 1) {
             int n = pq.poll();
-            return new int[]{n, n};
-        }
-        if(pq.size() > 1) answer[1] = pq.poll();
-        while(pq.size() > 0) answer[0] = pq.poll();
-        if(answer[1] > answer[0]) {
-            int tmp = answer[1];
-            answer[1] = answer[0];
-            answer[0] = tmp;
+            answer[0] = n;
+            answer[1] = n;
+        } else if (pq.size() > 1) {
+            answer[1] = pq.poll();
+            while(true) {
+                int n = pq.poll();
+                if(pq.isEmpty()) {
+                    answer[0] = n;
+                    break;
+                }
+            }
         }
         return answer;
-    }
+    }    
 }
