@@ -1,65 +1,84 @@
 import java.util.*;
-
 class Solution {
+    static int[][] map;
+    static int idx = 1;
     static int[] dr = {-1, 0, 1, 0};
     static int[] dc = {0, 1, 0, -1};
-    static char[][] map;
-    static boolean[][] visited;
-    static Map<Character, Integer> regionSize;
-
+    static Map<Integer, Integer> hm = new HashMap<>();
+    
     public int solution(int[][] land) {
         int answer = 0;
-        int rows = land.length, cols = land[0].length;
-        map = new char[rows][cols];
-        visited = new boolean[rows][cols];
-        regionSize = new HashMap<>();
+        map = new int[land.length][land[0].length];
         
-        char region = 'A';
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (land[i][j] == 1 && !visited[i][j]) {
-                    markRegion(i, j, region++, land);
+        for(int i=0; i<land.length; i++) {
+            for(int j=0; j<land[0].length; j++) {
+                if(land[i][j] == 1 && map[i][j] == 0) {
+                    setIdx(land, i, j);
                 }
             }
         }
-
-        for (int col = 0; col < cols; col++) {
-            Set<Character> uniqueRegions = new HashSet<>();
-            for (int row = 0; row < rows; row++) {
-                if (map[row][col] >= 'A') {
-                    uniqueRegions.add(map[row][col]);
-                }
-            }
-            int sum = uniqueRegions.stream().mapToInt(regionSize::get).sum();
-            answer = Math.max(answer, sum);
+        
+        // for(int[] arr : map) System.out.println(Arrays.toString(arr));
+        // System.out.println(hm);
+        
+        for(int i=0; i<map[0].length; i++) {
+           answer = Math.max(answer, getMaxOil(i));
         }
+        
         return answer;
     }
-
-    private void markRegion(int startRow, int startCol, char region, int[][] land) {
-        Queue<int[]> queue = new LinkedList<>();
-        List<int[]> cells = new ArrayList<>();
-        queue.add(new int[]{startRow, startCol});
-        visited[startRow][startCol] = true;
-        int size = 0;
-
-        while (!queue.isEmpty()) {
-            int[] current = queue.poll();
-            int r = current[0], c = current[1];
-            map[r][c] = region;
-            size++;
-            cells.add(current);
-
-            for (int d = 0; d < 4; d++) {
-                int nr = r + dr[d], nc = c + dc[d];
-                if (nr >= 0 && nr < land.length && nc >= 0 && nc < land[0].length 
-                    && land[nr][nc] == 1 && !visited[nr][nc]) {
-                    visited[nr][nc] = true;
-                    queue.add(new int[]{nr, nc});
+    
+    public int getMaxOil(int c) {
+        boolean[] v = new boolean[idx];
+        int cnt = 0;
+        
+        for(int i=0; i<map.length; i++) {
+            if(map[i][c] != 0 && !v[map[i][c]]) {
+                cnt += hm.get(map[i][c]);
+                v[map[i][c]] = true;
+            }
+        }
+        
+        return cnt;
+    }
+    
+    public void setIdx(int[][] land, int r, int c) {
+        Queue<Pos> q = new LinkedList<>();
+        q.add(new Pos(r, c));
+        int cnt = 0;
+        
+        while(!q.isEmpty()) {
+            Pos cur = q.poll();
+            map[cur.r][cur.c] = idx;
+            cnt++;
+            
+            for(int i=0; i<4; i++) {
+                int nr = dr[i] + cur.r;
+                int nc = dc[i] + cur.c;
+                
+                if(isPossible(nr, nc, land)) {
+                    map[nr][nc] = idx;
+                    q.add(new Pos(nr, nc));
                 }
             }
         }
-
-        regionSize.put(region, size);
+        
+        hm.put(idx, cnt);
+        idx++;
+    }
+    
+    public boolean isPossible(int nr, int nc, int[][] land) {
+        if(nr>=0 && nc>=0 && nr<land.length && nc<land[0].length && land[nr][nc] == 1 && map[nr][nc] == 0) {
+            return true;
+        }
+        return false;
+    }
+    
+    class Pos{
+        int r, c;
+        public Pos(int r, int c) {
+            this.r = r;
+            this.c = c;
+        }
     }
 }
