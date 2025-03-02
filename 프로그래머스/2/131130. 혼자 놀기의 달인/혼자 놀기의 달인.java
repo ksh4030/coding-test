@@ -1,37 +1,27 @@
 import java.util.*;
-
 class Solution {
+    static boolean[] v;
+    static List<Integer> list = new ArrayList<>();
+    
     public int solution(int[] cards) {
-        boolean[] visit = new boolean[cards.length];
-        List<Integer> groupSizes = new ArrayList<>();
-
-        // 각 그룹의 크기를 계산
-        for (int i = 0; i < cards.length; i++) {
-            if (!visit[i]) {
-                groupSizes.add(dfs(cards, i, visit));
+        int answer = 0;
+        v = new boolean[cards.length];
+        
+        for(int i=0; i<cards.length; i++) {
+            if(!v[i]) {
+                dfs(0, i, cards);
             }
         }
-
-        // 그룹 크기 내림차순 정렬
-        Collections.sort(groupSizes, Collections.reverseOrder());
-
-        // 상위 두 그룹 크기의 곱 계산
-        if (groupSizes.size() < 2) {
-            return 0; // 그룹이 하나라면 점수는 0
-        } else {
-            return groupSizes.get(0) * groupSizes.get(1);
-        }
+        Collections.sort(list, Comparator.reverseOrder());
+        return list.size() > 1 ? list.get(0) * list.get(1) : 0;
     }
-
-    private int dfs(int[] cards, int idx, boolean[] visit) {
-        int count = 0;
-
-        while (!visit[idx]) {
-            visit[idx] = true;
-            idx = cards[idx] - 1; // 다음 상자 이동
-            count++;
+    
+    public void dfs(int depth, int idx, int[] cards) {
+        if(v[idx]) {
+            list.add(depth);
+            return;
         }
-
-        return count;
+        v[idx] = true;
+        dfs(depth + 1, cards[idx] - 1, cards);
     }
 }
