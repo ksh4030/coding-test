@@ -1,9 +1,9 @@
-SELECT item_id, item_name, rarity 
-FROM item_info 
-WHERE item_id NOT IN (
-    SELECT DISTINCT parent_item_id 
-    FROM item_tree
-    WHERE parent_item_id IS NOT NULL
+-- 코드를 작성해주세요
+select item_id, item_name, rarity
+from item_info
+where item_id not in (
+    select parent_item_id
+    from item_tree
+    where parent_item_id is not null
 )
-order by item_id desc
-;
+order by item_id desc;
