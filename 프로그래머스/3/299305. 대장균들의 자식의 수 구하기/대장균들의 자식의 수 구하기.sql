@@ -1,9 +1,8 @@
-select id, ifnull(
-    (
-        select count(*)
-        from ecoli_data
-        group by parent_id
-        having parent_id = id
-    ), 0
-) as child_count
-from ecoli_data
+-- 코드를 작성해주세요
+select e.id, (
+    select count(se.id)
+    from ecoli_data se
+    where e.id = se.parent_id
+) as child_count 
+from ecoli_data e
+order by id;
