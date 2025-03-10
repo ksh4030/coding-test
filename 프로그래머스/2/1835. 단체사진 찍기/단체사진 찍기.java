@@ -1,60 +1,56 @@
 import java.util.*;
-
 class Solution {
-    private static int answer;
-    private static final String[] characters = {"A", "C", "F", "J", "M", "N", "R", "T"};
-    private static boolean[] visited = new boolean[8];
-
-    public int solution(int n, String[] conditions) {
-        answer = 0;
-        findPermutations(0, new String[8], conditions);
-        return answer;
+    static String[] man = {"A", "C", "F", "J", "M", "N", "R", "T"};
+    static boolean[] v;
+    static int ans;
+    public int solution(int n, String[] data) {
+        int answer = 0;
+        v = new boolean[man.length];
+        ans = 0;
+        per(new ArrayList<>(), data);
+        return ans;
     }
-
-    private static void findPermutations(int depth, String[] arrangement, String[] conditions) {
-        if (depth == arrangement.length) {
-            Map<String, Integer> positionMap = new HashMap<>();
-            for (int i = 0; i < arrangement.length; i++) {
-                positionMap.put(arrangement[i], i);
-            }
-            if (isValid(positionMap, conditions)) {
-                answer++;
-            }
+    
+    public void per(List<String> list, String[] data) {
+        if(list.size() == 8) {
+            if(isPossible(list, data)) ans++;
             return;
         }
-
-        for (int i = 0; i < characters.length; i++) {
-            if (!visited[i]) {
-                visited[i] = true;
-                arrangement[depth] = characters[i];
-                findPermutations(depth + 1, arrangement, conditions);
-                visited[i] = false;
+        
+        for(int i=0; i<man.length; i++) {
+            if(!v[i]) {
+                v[i] = true;
+                list.add(man[i]);
+                per(list, data);
+                list.remove(list.size() - 1);
+                v[i] = false;
             }
         }
     }
-
-    private static boolean isValid(Map<String, Integer> positionMap, String[] conditions) {
-        for (String condition : conditions) {
-            String first = condition.substring(0, 1);
-            String second = condition.substring(2, 3);
-            char op = condition.charAt(3);
-            int distance = condition.charAt(4) - '0';
-
-            int actualDistance = Math.abs(positionMap.get(first) - positionMap.get(second)) - 1;
-
-            if (!checkCondition(actualDistance, distance, op)) {
-                return false;
-            }
+    
+    public boolean isPossible(List<String> list, String[] data) {
+        Map<String, Integer> map = new HashMap<>();
+        for(int i=0; i<list.size(); i++) {
+            map.put(list.get(i), i);
         }
+        
+        for(String s : data) {
+            int a = map.get(String.valueOf(s.charAt(0)));
+            int b = map.get(String.valueOf(s.charAt(2)));
+            switch(s.charAt(3)) {
+                case '=' :
+                    if(Math.abs(a-b) - 1 != s.charAt(4)-'0') return false;
+                    break;
+                case '>' :
+                    if(Math.abs(a-b) - 1 <= s.charAt(4)-'0') return false;
+                    break;
+                case '<' :
+                    if(Math.abs(a-b) - 1 >= s.charAt(4)-'0') return false;
+                    break;
+            }
+            
+        }
+        
         return true;
-    }
-
-    private static boolean checkCondition(int actual, int required, char op) {
-        switch (op) {
-            case '=': return actual == required;
-            case '<': return actual < required;
-            case '>': return actual > required;
-            default: return false;
-        }
     }
 }
