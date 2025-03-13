@@ -1,22 +1,16 @@
-WITH value AS (
-    SELECT car.daily_fee, car.car_type, his.history_id,
-           DATEDIFF(end_date, start_date) + 1 AS period,
-    CASE 
-      WHEN DATEDIFF(end_date, start_date) + 1 >= 90 THEN '90일 이상'
-      WHEN DATEDIFF(end_date, start_date) + 1 >= 30 THEN '30일 이상'
-      WHEN DATEDIFF(end_date, start_date) + 1 >= 7 THEN '7일 이상'
-      ELSE 'NONE' END AS duration_type
-FROM car_rental_company_rental_history AS his
-INNER JOIN car_rental_company_car AS car ON car.car_id = his.car_id
-WHERE car.car_type = '트럭')   
-
-
-
-SELECT value.history_id, 
-    ROUND(value.daily_fee * value.period * 
-          (100 - IFNULL(plan.discount_rate,0)) / 100) AS FEE
-FROM value
-LEFT JOIN car_rental_company_discount_plan AS plan 
-    ON plan.duration_type = value.duration_type 
-    AND plan.car_type = value.car_type
-ORDER BY 2 DESC, 1 DESC
+with truck_history_table as (
+    select h.history_id, c.car_type, c.daily_fee, datediff(h.end_date, h.start_date) + 1 as period,
+    case
+        when datediff(h.end_date, h.start_date) + 1 >= 90 then '90일 이상'
+        when datediff(h.end_date, h.start_date) + 1 >= 30 then '30일 이상'
+        when datediff(h.end_date, h.start_date) + 1 >= 7 then '7일 이상'
+        else 'NONE'
+    end as duration_type    
+    from car_rental_company_rental_history h
+    join car_rental_company_car c on h.car_id = c.car_id
+    where c.car_type = '트럭'
+)
+SELECT h.history_id, round(h.daily_fee * h.period * (100 - ifnull(d.discount_rate, 0)) / 100) as fee
+from truck_history_table h
+left join car_rental_company_discount_plan d on h.car_type = d.car_type and h.duration_type = d.duration_type
+order by fee desc, h.history_id desc;
