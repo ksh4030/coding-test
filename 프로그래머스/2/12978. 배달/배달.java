@@ -7,7 +7,7 @@ class Solution {
         init(N, road);
         dijkstra();
         
-        for(int i=1; i<dist.length; i++) if(dist[i] <= K) answer++;
+        for(int i=1; i<=N; i++) if(dist[i] <= K) answer++;
         
         return answer;
     }
@@ -24,28 +24,27 @@ class Solution {
             
             for(Node next : graph.get(town)) {
                 int nextTown = next.town;
-                int nextTime = next.time + time;
+                int nextTime = time + next.time;
                 
                 if(dist[nextTown] > nextTime) {
                     dist[nextTown] = nextTime;
-                    pq.offer(new Node(nextTown, nextTime));
+                    pq.add(new Node(nextTown, nextTime));
                 }
             }
-            
         }
     }
     
     public void init(int N, int[][] road) {
+        dist = new int[N+1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[1] = 0;
+        
         for(int i=0; i<=N; i++) graph.add(new ArrayList<>());
         
         for(int[] arr : road) {
             graph.get(arr[0]).add(new Node(arr[1], arr[2]));
             graph.get(arr[1]).add(new Node(arr[0], arr[2]));
         }
-        
-        dist = new int[N+1];
-        Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[1] = 0;
     }
     
     class Node {
