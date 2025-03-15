@@ -1,21 +1,21 @@
-WITH available_cars AS (
-    SELECT a.car_id, a.car_type, a.daily_fee
-    FROM CAR_RENTAL_COMPANY_CAR a
-    WHERE a.car_type IN ('세단', 'SUV')
-    AND a.car_id NOT IN (
-        SELECT b.car_id
-        FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY b
-        WHERE b.start_date <= '2022-11-30' AND b.end_date >= '2022-11-01'
+with possible_car as (
+    select a.car_id, a.car_type, a.daily_fee
+    from car_rental_company_car a
+    where (a.car_type = 'SUV' or a.car_type = '세단') and 
+    a.car_id not in (
+        select b.car_id
+        from car_rental_company_rental_history b
+        where b.start_date <= '2022-11-30' and b.end_date >= '2022-11-01'
     )
-), price_cars as (
-    SELECT a.car_id, a.car_type, a.daily_fee, 
-           30 * a.daily_fee * (1 - COALESCE(d.discount_rate, 0) / 100) AS fee
-    FROM available_cars a
-    LEFT JOIN CAR_RENTAL_COMPANY_DISCOUNT_PLAN d ON a.car_type = d.car_type
-    WHERE d.duration_type = '30일 이상'
+),
+discount_table as (
+    select car_type, discount_rate
+    from car_rental_company_discount_plan
+    where car_type in ('SUV', '세단') and duration_type = '30일 이상'
 )
 
-select car_id, car_type, round(fee) as fee
-from price_cars
-where fee between 50000 and 2000000
-;
+select a.car_id, a.car_type, round((30 * (a.daily_fee - (a.daily_fee * (b.discount_rate / 100)))), 0) as fee
+from possible_car a
+join discount_table b on a.car_type = b.car_type
+having fee >= 500000 and fee < 2000000
+order by fee desc, a.car_type, a.car_id desc;
