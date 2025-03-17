@@ -1,10 +1,10 @@
 # [level 0] [PCCE 기출문제] 2번 / 각도 합치기 - 340206 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/340206) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/340206?language=python3) 
 
 ### 성능 요약
 
-메모리: 77.7 MB, 시간: 412.96 ms
+메모리: 7.54 MB, 시간: 17.07 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 12월 04일 22:17:58
+2025년 03월 17일 16:37:51
 
 ### 문제 설명
 
