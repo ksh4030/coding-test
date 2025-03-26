@@ -1,9 +1,9 @@
 import java.util.*;
 class Solution {
-    static List<Set<Integer>> list = new ArrayList<>();
     public int solution(int N, int number) {
         if(N == number) return 1;
         
+        List<Set<Integer>> list = new ArrayList<>();        
         for(int i=0; i<=8; i++) list.add(new HashSet<>());
         list.get(1).add(N);
         
