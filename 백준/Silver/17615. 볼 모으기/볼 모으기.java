@@ -3,54 +3,50 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Main {
-
+    static int cnt = Integer.MAX_VALUE;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
         String s = br.readLine();
 
-        int a = cal(N, s, 'R');
-        int b = cal(N, s, 'B');
+        left(s, 'R');
+        left(s, 'B');
+        right(s, 'R');
+        right(s, 'B');
 
-        System.out.println(Math.min(a, b));
+        System.out.println(cnt);
     }
 
-    public static int cal(int N, String s, char target) {
-        int isTarget = 0;
-        int unTarget = 0;
-
+    public static void left(String s, char target) {
+        int idx = 0;
         for(int i=0; i<s.length(); i++) {
-            if(s.charAt(i) == target) {
-                isTarget++;
-            } else {
-                unTarget++;
-            }
+            if(s.charAt(i) == target) idx++;
+            else break;
+        }
+        int c = 0;
+        for(int i=idx; i<s.length(); i++) {
+            if(s.charAt(i) == target) c++;
         }
 
-        int left = isTarget + unTarget;
-        int right = 0;
+        cnt = Math.min(cnt, c);
+    }
+
+    public static void right(String s, char target) {
+        int idx = s.length() - 1;
+        int c = 0;
 
         for(int i=s.length()-1; i>=0; i--) {
             if(s.charAt(i) == target) {
-                left--;
-                right++;
+                idx--;
             } else {
                 break;
             }
         }
 
-        int cnt = 0;
-        int idx = 0;
-
-        while (true) {
-            if(isTarget == right && unTarget == left) return cnt;
-
-            if(s.charAt(idx) == target) {
-                left--;
-                right++;
-                cnt++;
-            }
-            idx++;
+        for(int i=idx; i>=0; i--) {
+            if(s.charAt(i) == target) c++;
         }
+
+        cnt = Math.min(cnt, c);
     }
 }
