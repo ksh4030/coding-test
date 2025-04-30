@@ -1,32 +1,35 @@
 import java.util.*;
 class Solution {
+    static Queue<Integer> q = new LinkedList<>();
+    static Map<Integer, Integer> map = new HashMap<>();
     public int solution(int[] priorities, int location) {
-        int answer = 0;
-        
-        Queue<Integer> priority = new LinkedList<>();
-        Queue<Integer> num = new LinkedList<>();
-        
-        for(int i=0; i<priorities.length; i++) {
-            priority.add(priorities[i]);
-            num.add(i);
-        }
+        int answer = 1;
+        init(priorities, location);
         Arrays.sort(priorities);
+        int idx = priorities.length - 1;
         
-        int idx = priorities.length-1;
-        int cnt = 1;        
-        while(!priority.isEmpty()) {
-            if(priority.peek() == priorities[idx]) {
-                priority.poll();
-                idx--;
-                int n = num.poll();
-                if(n == location) return cnt;
-                else cnt++;
+        while(!q.isEmpty()) {
+            int n = q.poll();
+            
+            if(map.get(n) == priorities[idx]) {
+                if(n == location) {
+                    return answer;
+                } else {
+                    answer++;
+                    idx--;
+                }
             } else {
-                priority.add(priority.poll());
-                num.add(num.poll());
+                q.add(n);
             }
         }
-                
+        
         return answer;
+    }
+    
+    public void init(int[] priorities, int location) {    
+        for(int i=0; i<priorities.length; i++) {
+            q.add(i);
+            map.put(i, priorities[i]);
+        }
     }
 }
