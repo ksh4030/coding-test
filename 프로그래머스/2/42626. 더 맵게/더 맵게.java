@@ -6,12 +6,17 @@ class Solution {
         PriorityQueue<Integer> pq = new PriorityQueue<>();
         for(int n : scoville) pq.add(n);
         
-        while(pq.peek() < K){    
-            if(pq.size() <= 1) return -1;
-            int num1 = pq.poll();
-            int num2 = pq.poll();
-            pq.add(num1 + (num2*2));
-            answer++;            
+        while(true) {
+            if(pq.peek() >= K) break;
+            if(pq.size() < 2) return -1;
+            
+            int a = pq.poll();
+            int b = pq.poll();
+            
+            int mix = a + (b*2);
+            if(mix == a) return -1;
+            pq.add(mix);
+            answer++;
         }
         
         return answer;
