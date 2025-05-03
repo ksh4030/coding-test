@@ -1,13 +1,14 @@
 import java.util.*;
-class Solution {    
+class Solution {
     public int solution(int[] stones, int k) {
         int answer = 0;
-        int max = 200_000_000;
+        
         int min = 0;
+        int max = 200_000_000;
         
         while(min <= max) {
-            int mid = (max+min)/2;
-            if(check(mid, stones, k)) {
+            int mid = (min+max) / 2;
+            if(isPossible(mid, stones, k)) {
                 answer = Math.max(answer, mid);
                 min = mid+1;
             } else {
@@ -18,11 +19,12 @@ class Solution {
         return answer;
     }
     
-    public boolean check(int mid, int[] stones, int k) {
+    public boolean isPossible(int mid, int[] stones, int k) {
         int cnt = 0;
         for(int i=0; i<stones.length; i++) {
-            if(stones[i] < mid) cnt++;
+            if(mid > stones[i]) cnt++;
             else cnt = 0;
+            
             if(cnt == k) return false;
         }
         return true;
