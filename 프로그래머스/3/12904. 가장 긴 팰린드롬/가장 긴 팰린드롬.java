@@ -1,26 +1,27 @@
 import java.util.*;
-class Solution{
-    public int solution(String s){
+class Solution {
+    public int solution(String s) {
         int answer = 0;
         
         for(int i=0; i<s.length(); i++) {
-            answer = Math.max(answer, palindrome(s, i, i));
-            answer = Math.max(answer, palindrome(s, i, i+1));
+            for(int j=s.length()-1; j>=i; j--) {
+                if(s.charAt(i) == s.charAt(j)) {
+                    if(i == j) answer = Math.max(1, answer);
+                    if(isPossible(s, i, j)) answer = Math.max(answer, j - i + 1);
+                }
+            }
         }
         
         return answer;
     }
     
-    public int palindrome(String s, int left, int right) {
-        while (true) {
-            if(left<0 || right>=s.length()) break;
-            if(s.charAt(left) == s.charAt(right)) {
-                left--;
-                right++;
-            } else {
-                break;
-            }            
+    public boolean isPossible(String s, int start, int end) {
+        while(start < end) {
+            if(s.charAt(start) != s.charAt(end)) return false;
+            start++;
+            end--;
         }
-        return right - left - 1;
+        
+        return true;
     }
 }
