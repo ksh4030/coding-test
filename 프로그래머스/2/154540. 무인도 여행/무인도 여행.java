@@ -1,72 +1,81 @@
 import java.util.*;
 class Solution {
-    static int[] dr = {-1, 1, 0, 0};
-    static int[] dc = {0, 0, -1 ,1};
+    static int[] dr = {-1, 0, 1, 0};
+    static int[] dc = {0, 1, 0, -1};
+    
+    static List<Integer> list = new ArrayList<>();
     static boolean[][] v;
     static int[][] map;
-
-    public int[] solution(String[] maps) {
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
-        v = new boolean[maps.length][maps[0].length()];
-        makeMap(maps);        
+    public int[] solution(String[] maps) {        
+        init(maps);
         
-        for(int i=0; i<map.length; i++) {
-            for(int j=0; j<map[0].length; j++) {
+        for(int i=0; i<maps.length; i++) {
+            for(int j=0; j<map[i].length; j++) {
                 if(map[i][j] > 0 && !v[i][j]) {
-                    v[i][j] = true;
-                    int n = bfs(new Pos(i,j));
-                    if(n > 0) pq.add(n);                    
+                    list.add(bfs(i, j));
                 }
             }
         }
         
-        int[] answer = new int[pq.size()];
-        for(int i=0; i<answer.length; i++) answer[i] = pq.poll();
-        return answer.length == 0 ? new int[]{-1} : answer;
+        if(list.size() == 0) return new int[]{-1};
+        
+        int[] answer = list.stream().mapToInt(Integer::intValue).toArray();
+        Arrays.sort(answer);
+        
+        return answer;
     }
     
-    public int bfs(Pos pos) {
-        Queue<Pos> q = new LinkedList<>();
-        q.add(pos);
-        int sum = map[pos.r][pos.c];
+    public int bfs(int r, int c) {
+        Queue<Node> q = new LinkedList<>();
+        q.add(new Node(r, c));
+        v[r][c] = true;
+        
+        int sum = map[r][c];
         
         while(!q.isEmpty()) {
-            Pos cur = q.poll();
+            Node cur = q.poll();
+            
             for(int i=0; i<4; i++) {
                 int nr = cur.r + dr[i];
                 int nc = cur.c + dc[i];
                 
-                if(nr<0 || nc<0 || nr>=map.length || nc>=map[0].length || v[nr][nc] || map[nr][nc] == 0) continue;
-                v[nr][nc] = true;
-                sum += map[nr][nc];
-                q.add(new Pos(nr, nc));
+                if(isPossible(nr, nc)) {
+                    v[nr][nc] = true;
+                    q.add(new Node(nr, nc));
+                    sum += map[nr][nc];
+                }
             }
         }
         
         return sum;
     }
     
-    public void makeMap(String[] maps) {
-        map = new int[maps.length][maps[0].length()];
+    public boolean isPossible(int r, int c) {
+        if(r<0 || c<0 || r>=map.length || c>=map[0].length || map[r][c]==0 || v[r][c]) return false;
+        return true;
+    }
+    
+    public void init(String[] maps) {
+        int r = maps.length;
+        int c = maps[0].length();
         
-        for(int i=0; i<map.length; i++) {
-            String[] arr = maps[i].split("");
-            for(int j=0; j<map[0].length; j++) {
-                try {
-                    int n = Integer.parseInt(arr[j]);
-                    map[i][j] = n;
-                } catch (NumberFormatException e) {
-                    map[i][j] = 0;
+        map = new int[r][c];
+        v = new boolean[r][c];
+        
+        for(int i=0; i<maps.length; i++) {
+            for(int j=0; j<maps[0].length(); j++) {
+                if(maps[i].charAt(j) != 'X') {
+                    map[i][j] = maps[i].charAt(j) - '0';
                 }
             }
         }
     }
     
-    class Pos{
+    class Node {
         int r, c;
-        public Pos(int r, int c) {
+        public Node(int r, int c) {
             this.r = r;
-            this.c = c;            
+            this.c = c;
         }
     }
 }
