@@ -1,27 +1,29 @@
 import java.util.*;
+
 class Solution {
-    static boolean[] v;
     static List<Integer> list = new ArrayList<>();
-    
+    static boolean[] v;
     public int solution(int[] cards) {
         int answer = 0;
         v = new boolean[cards.length];
         
         for(int i=0; i<cards.length; i++) {
-            if(!v[i]) {
-                dfs(0, i, cards);
-            }
+            if(!v[i]) findCycle(i, 0, cards);
         }
+        
+        if(list.size() < 2) return 0;
+        
         Collections.sort(list, Comparator.reverseOrder());
-        return list.size() > 1 ? list.get(0) * list.get(1) : 0;
+        return list.get(0) * list.get(1);
     }
     
-    public void dfs(int depth, int idx, int[] cards) {
-        if(v[idx]) {
-            list.add(depth);
+    public void findCycle(int cur, int cnt, int[] cards) {
+        if(v[cur]) {
+            list.add(cnt);
             return;
         }
-        v[idx] = true;
-        dfs(depth + 1, cards[idx] - 1, cards);
+        
+        v[cur] = true;
+        findCycle(cards[cur]-1, cnt+1, cards);
     }
 }
