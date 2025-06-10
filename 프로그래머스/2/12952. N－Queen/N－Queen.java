@@ -1,38 +1,30 @@
+import java.util.*;
 class Solution {
-    static int[] arr;
-    static int cnt;
+    static int ans = 0;
+    static boolean[] arr;
+    static boolean[] a;
+    static boolean[] b;
     public int solution(int n) {
         int answer = 0;
-        arr = new int[n];
-        bt(n ,0);
-
-        answer = cnt;
-        return answer;
+        arr = new boolean[n];
+        a = new boolean[2*n-1];
+        b = new boolean[2*n-1];
+        bt(0, n);
+        
+        return ans;
     }
-    static void bt(int n, int row) {
-        if(n == row) {
-            cnt++;
+    
+    public void bt(int cur, int n) {
+        if(cur == n) {
+            ans++;
             return;
         }
-
-        for (int i = 0; i < n; i++) {
-            arr[row] = i;
-            if(check(row)) {
-                bt(n ,row + 1);
-            }
+        
+        for(int i=0; i<n; i++) {
+            if(arr[i] || a[cur+i] || b[cur-i+n-1]) continue;
+            arr[i] = a[cur+i] = b[cur-i+n-1] = true;
+            bt(cur+1, n);
+            arr[i] = a[cur+i] = b[cur-i+n-1] = false;
         }
-    }
-
-    static boolean check(int row) {
-        for (int i = 0; i < row; i++) {
-            if(arr[i] == arr[row]) {
-                return false;
-            }
-
-            if(Math.abs(row - i) == Math.abs(arr[row] - arr[i])) {
-                return false;
-            }
-        }
-        return true;
     }
 }
