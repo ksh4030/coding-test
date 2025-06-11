@@ -1,82 +1,90 @@
 import java.util.*;
 class Solution {
-    static int[][] map;
-    static int idx = 1;
-    static int[] dr = {-1, 0, 1, 0};
-    static int[] dc = {0, 1, 0, -1};
-    static Map<Integer, Integer> hm = new HashMap<>();
+    int[] dr = {-1, 0, 1, 0};
+    int[] dc = {0, 1, 0, -1};
+    
+    static int[][] area;
+    static boolean[][] v;
+    static HashMap<Integer, Integer> map = new HashMap<>();
+    static int num = 1;
     
     public int solution(int[][] land) {
         int answer = 0;
-        map = new int[land.length][land[0].length];
+        init(land);
         
-        for(int i=0; i<land.length; i++) {
-            for(int j=0; j<land[0].length; j++) {
-                if(land[i][j] == 1 && map[i][j] == 0) {
-                    setIdx(land, i, j);
-                }
-            }
-        }
-        
-        // for(int[] arr : map) System.out.println(Arrays.toString(arr));
-        // System.out.println(hm);
-        
-        for(int i=0; i<map[0].length; i++) {
-           answer = Math.max(answer, getMaxOil(i));
+        for(int i=0; i<area[0].length; i++) {
+            answer = Math.max(findMax(i), answer);
         }
         
         return answer;
     }
     
-    public int getMaxOil(int c) {
-        boolean[] v = new boolean[idx];
-        int cnt = 0;
+    public int findMax(int idx) {
+        int sum = 0;
+        boolean[] v = new boolean[num];
         
-        for(int i=0; i<map.length; i++) {
-            if(map[i][c] != 0 && !v[map[i][c]]) {
-                cnt += hm.get(map[i][c]);
-                v[map[i][c]] = true;
+        for(int i=0; i<area.length; i++) {
+            if(area[i][idx]>0 && !v[area[i][idx]]) {
+                sum += map.get(area[i][idx]);
+                v[area[i][idx]] = true;
             }
         }
         
-        return cnt;
+        return sum;
     }
     
-    public void setIdx(int[][] land, int r, int c) {
-        Queue<Pos> q = new LinkedList<>();
-        q.add(new Pos(r, c));
-        int cnt = 0;
+    public void init(int[][] land) {
+        int r = land.length;
+        int c = land[0].length;
+        
+        area = new int[r][c];
+        v = new boolean[r][c];
+        
+        for(int i=0; i<r; i++) {
+            for(int j=0; j<c; j++) {
+                if(land[i][j]==1 && area[i][j]==0 && !v[i][j]) {
+                    int size = divideArea(i, j, land);
+                    map.put(num, size);
+                    num++;
+                }
+            }
+        }
+    }
+    
+    public int divideArea(int r, int c, int[][] land) {
+        Queue<Node> q = new LinkedList<>();
+        q.add(new Node(r, c));
+        v[r][c] = true;
+        area[r][c] = num;
+        int size = 1;
         
         while(!q.isEmpty()) {
-            Pos cur = q.poll();
-            map[cur.r][cur.c] = idx;
-            cnt++;
+            Node cur = q.poll();
             
             for(int i=0; i<4; i++) {
                 int nr = dr[i] + cur.r;
                 int nc = dc[i] + cur.c;
                 
                 if(isPossible(nr, nc, land)) {
-                    map[nr][nc] = idx;
-                    q.add(new Pos(nr, nc));
+                    v[nr][nc] = true;
+                    q.add(new Node(nr, nc));
+                    area[nr][nc] = num;
+                    size++;
                 }
             }
         }
         
-        hm.put(idx, cnt);
-        idx++;
+        return size;
     }
     
-    public boolean isPossible(int nr, int nc, int[][] land) {
-        if(nr>=0 && nc>=0 && nr<land.length && nc<land[0].length && land[nr][nc] == 1 && map[nr][nc] == 0) {
-            return true;
-        }
-        return false;
+    public boolean isPossible(int r, int c, int[][] land) {
+        if(r<0 || c<0 || r>=land.length || c>=land[0].length || land[r][c] == 0 || v[r][c]) return false;
+        return true;
     }
     
-    class Pos{
+    class Node {
         int r, c;
-        public Pos(int r, int c) {
+        public Node(int r, int c) {
             this.r = r;
             this.c = c;
         }
