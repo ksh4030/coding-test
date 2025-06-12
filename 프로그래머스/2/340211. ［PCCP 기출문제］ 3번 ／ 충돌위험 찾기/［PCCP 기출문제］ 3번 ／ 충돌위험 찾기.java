@@ -1,105 +1,62 @@
 import java.util.*;
-public class Solution {
+
+class Solution {
     public int solution(int[][] points, int[][] routes) {
-        int answer = 0;
-        int[][] intArrays = new int[101][101]; 
-
-        List<Robot> list = new ArrayList<>();
-        for (int i = 0; i < routes.length; i++) {
-            int index = routes[i][0] - 1;
-            Pos pos = new Pos(points[index][0], points[index][1]);
-            Robot robot = new Robot(pos);
-
-            intArrays[pos.y][pos.x]++;
-
-            for (int j = 1; j < routes[i].length; j++) {
-                index = routes[i][j] - 1;
-                pos = new Pos(points[index][0], points[index][1]);
-                robot.posList.add(pos);
-            }
-
-            list.add(robot);
+        // 포인트 번호 → 좌표 매핑
+        Map<Integer, int[]> pointMap = new HashMap<>();
+        for (int i = 0; i < points.length; i++) {
+            pointMap.put(i + 1, points[i]);
         }
 
-        for (int[] row : intArrays) {
-            for (int val : row) {
-                if (val > 1) {
-                    answer++;
+        // 시간대별 위치 기록: Map<시간, Map<"r,c", 개수>>
+        Map<Integer, Map<String, Integer>> timePositionMap = new HashMap<>();
+
+        // 각 로봇별 경로 계산 및 시간대별 위치 기록
+        for (int[] route : routes) {
+            List<String> path = new ArrayList<>();
+
+            for (int i = 0; i < route.length - 1; i++) {
+                int[] start = pointMap.get(route[i]);
+                int[] end = pointMap.get(route[i + 1]);
+
+                int r1 = start[0], c1 = start[1];
+                int r2 = end[0], c2 = end[1];
+
+                // r 우선 이동
+                while (r1 != r2) {
+                    path.add(r1 + "," + c1);
+                    r1 += (r1 < r2) ? 1 : -1;
+                }
+                // c 이동
+                while (c1 != c2) {
+                    path.add(r1 + "," + c1);
+                    c1 += (c1 < c2) ? 1 : -1;
+                }
+            }
+
+            // 마지막 위치 추가
+            int[] last = pointMap.get(route[route.length - 1]);
+            path.add(last[0] + "," + last[1]);
+
+            // 시간별 위치 기록
+            for (int t = 0; t < path.size(); t++) {
+                String pos = path.get(t);
+                timePositionMap.putIfAbsent(t, new HashMap<>());
+                Map<String, Integer> posCount = timePositionMap.get(t);
+                posCount.put(pos, posCount.getOrDefault(pos, 0) + 1);
+            }
+        }
+
+        // 충돌 위험 카운트
+        int dangerCount = 0;
+        for (Map<String, Integer> positions : timePositionMap.values()) {
+            for (int count : positions.values()) {
+                if (count >= 2) {
+                    dangerCount++;
                 }
             }
         }
 
-        while (list.size() > 1) {
-            List<Integer> removeList = new ArrayList<>();
-            for (int i = list.size() - 1; i >= 0; i--) {
-                boolean b = list.get(i).movePos(intArrays);
-
-                if (!b) {
-                    removeList.add(i);
-                }
-            }
-
-            for (int idx : removeList) {
-                list.remove(idx);
-            }
-
-            for (int[] row : intArrays) {
-                for (int val : row) {
-                    if (val > 1) {
-                        answer++;
-                    }
-                }
-            }
-        }
-
-        return answer;
-    }
-
-    public static class Robot {
-        public Pos pos;
-        public List<Pos> posList;
-
-        public Robot(Pos pos) {
-            this.pos = pos;
-            posList = new ArrayList<>();
-        }
-
-        public boolean movePos(int[][] intArrays) {
-            if (posList.size() > 0 && posList.get(0).y == pos.y && posList.get(0).x == pos.x) {
-                posList.remove(0);
-            }
-
-            intArrays[pos.y][pos.x]--;
-
-            if (posList.size() == 0) {
-                return false;
-            }
-
-            if (posList.get(0).y != pos.y) {
-                if (posList.get(0).y > pos.y) {
-                    pos.y++;
-                } else {
-                    pos.y--;
-                }
-            } else if (posList.get(0).x != pos.x) {
-                if (posList.get(0).x > pos.x) {
-                    pos.x++;
-                } else {
-                    pos.x--;
-                }
-            }
-
-            intArrays[pos.y][pos.x]++;
-            return true;
-        }
-    }
-    
-    public static class Pos {
-        public int y, x;
-
-        public Pos(int y, int x) {
-            this.y = y;
-            this.x = x;
-        }
+        return dangerCount;
     }
 }
