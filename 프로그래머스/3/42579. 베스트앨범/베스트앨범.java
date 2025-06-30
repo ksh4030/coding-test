@@ -1,39 +1,45 @@
 import java.util.*;
 class Solution {
-    public int[] solution(String[] genres, int[] plays) {        
-        HashMap<String, Integer> map = new HashMap<>();
+    static Map<String, Integer> map = new HashMap<>();
+    static List<String> genre;
         
-        for(int i=0; i<genres.length; i++) {
-            map.put(genres[i], map.getOrDefault(genres[i], 0) + plays[i]);
-        }
-        
+    public int[] solution(String[] genres, int[] plays) {
         List<Integer> list = new ArrayList<>();
-        List<String> mapList = new ArrayList<>(map.keySet());
-        Collections.sort(mapList, (o1, o2) -> map.get(o2) - map.get(o1));
+        init(genres, plays);
         
-        for(String key : mapList) {
-            for(int i=0; i<2; i++) {
-                int idx = -1;
+        for(String s : genre) {
+            for(int t=0; t<2; t++) {
                 int max = -1;
-                for(int j=0; j<genres.length; j++) {
-                    if(genres[j].equals(key)) {
-                        if(max < plays[j]) {
-                            max = plays[j];
-                            idx = j;
+                int idx = -1;
+                for(int i=0; i<genres.length; i++) {
+                    if(s.equals(genres[i])) {
+                        if(max < plays[i]) {
+                            idx = i;
+                            max = plays[i];
                         }
                     }
                 }
-                if(idx >= 0) {
+                if (idx >= 0) {
                     list.add(idx);
                     plays[idx] = -1;
                 }
             }
         }
-        
+                
         int[] answer = new int[list.size()];
-        for(int i=0; i<answer.length; i++) {
-            answer[i] = list.get(i);
-        }
+        for(int i=0; i<list.size(); i++) answer[i] = list.get(i);
+        
         return answer;
+    }
+    
+    public void init(String[] genres, int[] plays) {
+        for(int i=0; i<genres.length; i++) {
+            map.put(genres[i], map.getOrDefault(genres[i], 0) + plays[i]);
+        }
+        
+        genre = new ArrayList<>(map.keySet());
+        Collections.sort(genre, (o1, o2) -> {
+            return map.get(o2) - map.get(o1);
+        });
     }
 }
