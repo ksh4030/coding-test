@@ -11,8 +11,6 @@ class Solution {
         used[0] = true;
         int[] cur = routes[0];
         
-        System.out.println(Arrays.deepToString(routes));
-        
         for(int i=1; i<routes.length; i++) {
             if(cur[1] < routes[i][0]) {
                 answer++;
