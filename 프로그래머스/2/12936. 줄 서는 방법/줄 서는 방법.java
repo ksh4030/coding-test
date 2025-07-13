@@ -1,22 +1,21 @@
 import java.util.*;
-
-public class Solution {
+class Solution {
     public int[] solution(int n, long k) {
         int[] answer = new int[n];
+        long num = 1;
         List<Integer> list = new ArrayList<>();
-        long factorialNum = 1;
         for(int i=1; i<=n; i++) {
+            num *= i;
             list.add(i);
-            factorialNum *= i;
         }
-        k--; //배열은 0부터 시작
         int idx = 0;
+        k--;
         while(idx < n) {
-            factorialNum /= n - idx;
-            answer[idx++] = list.remove((int) (k / factorialNum));
-            k %= factorialNum;
+            num /= n - idx;
+            answer[idx++] = list.remove((int)(k / num));
+            k %= num;
         }
-
+        
         return answer;
     }
 }
