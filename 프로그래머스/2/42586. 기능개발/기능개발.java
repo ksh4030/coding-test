@@ -1,34 +1,29 @@
 import java.util.*;
 class Solution {
     public int[] solution(int[] progresses, int[] speeds) {
-        List<Integer> list = new ArrayList<>();        
-        
+        List<Integer> list = new ArrayList<>();
         Queue<Node> q = new LinkedList<>();
-        for(int i=0; i<progresses.length; i++) {
-            q.add(new Node(progresses[i], speeds[i]));
-        }
+        
+        for(int i=0; i<progresses.length; i++) q.add(new Node(progresses[i], speeds[i]));
         
         while(!q.isEmpty()) {
-            int size = q.size();
+            int n = q.size();
             int cnt = 0;
-            for(int i=0; i<size; i++) {
+            for(int i=0; i<n; i++) {
                 Node cur = q.poll();
-                cur = new Node(cur.prog+cur.speed, cur.speed);
-                q.add(cur);
+                q.add(new Node(cur.p + cur.s, cur.s));
             }
             
-            for(int i=0; i<size; i++) {
-                if(q.peek().prog >= 100) {
-                    q.poll();
+            while(!q.isEmpty()) {
+                if(q.peek().p >= 100) {
                     cnt++;
+                    q.poll();
                 } else {
                     break;
                 }
             }
-            
             if(cnt > 0) list.add(cnt);
         }
-        
         int[] answer = new int[list.size()];
         for(int i=0; i<answer.length; i++) {
             answer[i] = list.get(i);
@@ -37,10 +32,10 @@ class Solution {
     }
     
     class Node {
-        int prog, speed;
-        public Node(int prog, int speed) {
-            this.prog = prog;
-            this.speed = speed;
+        int p, s;
+        public Node(int p, int s) {
+            this.p = p;
+            this.s = s;
         }
     }
 }
