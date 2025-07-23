@@ -2,19 +2,26 @@ import java.util.*;
 class Solution {
     public int solution(int[] A, int[] B) {
         int answer = 0;
+        PriorityQueue<Integer> pqA = new PriorityQueue<>(Collections.reverseOrder());
+        PriorityQueue<Integer> pqB = new PriorityQueue<>(Collections.reverseOrder());
+                
+        for(int i=0; i<A.length; i++) {
+            pqA.add(A[i]);
+            pqB.add(B[i]);
+        }
         
-        Arrays.sort(A);
-        Arrays.sort(B);
-        int idxA = 0;
-        int idxB = 0;
-        
-        while(idxB < B.length) {
-            if(A[idxA] < B[idxB]) {
+        int a = -1;
+        int b = -1;
+        while(!pqA.isEmpty() && !pqB.isEmpty()) {
+            if(a == -1) a = pqA.poll();
+            if(b == -1) b = pqB.poll();
+            
+            if(b > a) {
                 answer++;
-                idxA++;
-                idxB++;
+                a = -1;
+                b = -1;
             } else {
-                idxB++;
+                a = -1;
             }
         }
         
