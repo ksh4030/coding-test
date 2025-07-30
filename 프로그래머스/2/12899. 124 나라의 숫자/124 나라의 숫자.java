@@ -1,27 +1,25 @@
 import java.util.*;
 class Solution {
-    public String solution(int n) {        
-        List<String> list = new ArrayList<>();
-        while(n >= 1) {            
-            switch(n%3) {
-                case 0 :
-                    list.add("4");
-                    n = n/3 - 1;
-                    break;
-                case 1:
-                    list.add("1");
-                    n /= 3;
-                    break;
-                case 2:
-                    list.add("2");
-                    n/=3;
-                    break;
+    public String solution(int n) {
+        String answer = "";
+        List<Integer> list = new ArrayList<>();
+        while(n > 0) {
+            int tmp = n%3;
+            n /= 3;            
+            if(tmp == 0) {
+                list.add(4);
+                n--;
+            } else if(tmp == 1) {
+                list.add(1);
+            } else {
+                list.add(2);
             }
         }
         
-        String answer = "";
-        Collections.reverse(list);
-        for(String s : list) answer += s;
+        for(int i=list.size()-1; i>=0; i--) {
+            answer += String.valueOf(list.get(i));
+        }
+        
         return answer;
     }
 }
