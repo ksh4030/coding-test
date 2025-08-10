@@ -1,57 +1,39 @@
 import java.util.*;
 class Solution {
-    static int[][] storage;
     public int solution(int n, int w, int num) {
         int answer = 0;
-        stackBox(n, w);
-        Pos pos = findPos(num);
+        int[][] map = new int[n%w == 0 ? n/w : n/w+1][w];
+        int a = 1;
         
-        for(int i=pos.r; i>=0; i--) {
-            if(storage[i][pos.c] != 0) answer++; 
+        boolean flag = true;
+        
+        loop:
+        for(int i=map.length-1; i>=0; i--) {
+            if(flag) {
+                for(int j=0; j<map[i].length; j++) {
+                    if(a > n) break loop;
+                    map[i][j] = a++;
+                }
+            } else {
+                for(int j=map[i].length-1; j>=0; j--) {
+                    if(a > n) break loop;
+                    map[i][j] = a++;
+                }
+            }
+            flag = !flag;
+        }
+        
+        loop:
+        for(int i=0; i<map.length; i++) {
+            for(int j=0; j<map[i].length; j++) {
+                if(map[i][j] == num) {
+                    answer = i+1;
+                    if(map[0][j]==0) answer--;
+                    break loop;
+                }
+            }
         }
         
         return answer;
-    }
-    
-    public Pos findPos(int num) {
-        for(int i=0; i<storage.length; i++) {
-            for(int j=0; j<storage[i].length; j++) {
-                if(storage[i][j] == num) {
-                    return new Pos(i, j);
-                }
-            }
-        }
-        
-        return new Pos(-1, -1);
-    }
-    
-    public void stackBox(int n, int w) {
-        storage = new int[n%w>0 ? n/w+1 : n/w][w];
-        int x = 1;
-        boolean flag = false;
-        
-        for(int i=storage.length-1; i>=0; i--) {
-            if(!flag) {
-                for(int j=0; j<storage[i].length; j++) {
-                    storage[i][j] = x++;
-                    if(x > n) return;
-                }
-            } else {
-                for(int j=storage[i].length-1; j>=0; j--) {
-                    storage[i][j] = x++;
-                    if(x > n) return;
-                }
-            }
-            
-            flag = !flag;
-        }
-    }
-    
-    class Pos{
-        int r, c;
-        public Pos(int r, int c) {
-            this.r = r;
-            this.c = c;
-        }
     }
 }
