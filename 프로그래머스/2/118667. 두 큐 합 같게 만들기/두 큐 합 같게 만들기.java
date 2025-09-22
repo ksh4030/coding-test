@@ -6,7 +6,6 @@ class Solution {
         Queue<Integer> q2 = new LinkedList<>();
         long sum1 = 0;
         long sum2 = 0;
-        long sum = 0;
 
         for (int n : queue1) {
             q1.add(n);
@@ -16,11 +15,11 @@ class Solution {
             q2.add(n);
             sum2+=n;
         }
-        sum = sum1 + sum2;
-        long target = sum/2;
+        if((sum1+sum2)%2 != 0) return -1;
+        long target = (sum1 + sum2)/2;
 
         long cnt = 0;
-        while (cnt < (queue1.length + queue2.length) * 2) {
+        while (cnt < (queue1.length + queue2.length)*2) {
             if(sum1 == target && sum2 == target) {
                 answer = (int)cnt;
                 break;
@@ -37,7 +36,6 @@ class Solution {
             }
             cnt++;
         }
-        if(cnt >= (queue1.length + queue2.length) * 4) answer = -1;
-        return answer;
+        return cnt >= (queue1.length + queue2.length)*2 ? -1 : answer;
     }
 }
