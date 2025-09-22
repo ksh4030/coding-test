@@ -1,7 +1,7 @@
 import java.util.*;
 class Solution {
     public int solution(int[] queue1, int[] queue2) {
-        int answer = -2;
+        int answer = -1;
         Queue<Integer> q1 = new LinkedList<>();
         Queue<Integer> q2 = new LinkedList<>();
         long sum1 = 0;
@@ -20,7 +20,7 @@ class Solution {
         long target = sum/2;
 
         long cnt = 0;
-        while (cnt < (queue1.length + queue2.length) * 4) {
+        while (cnt < (queue1.length + queue2.length) * 2) {
             if(sum1 == target && sum2 == target) {
                 answer = (int)cnt;
                 break;
