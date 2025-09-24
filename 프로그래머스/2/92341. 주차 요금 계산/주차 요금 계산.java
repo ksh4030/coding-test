@@ -1,67 +1,67 @@
 import java.util.*;
-class Solution {    
-    static Map<String, Integer> map = new HashMap<>();
-    static Map<String, Integer> info = new HashMap<>();
-    static Set<String> carNumbers = new HashSet<>();
+class Solution {
+    static Map<Integer, Integer> map = new HashMap<>();
+    static Map<Integer, Integer> info = new HashMap<>();
+    static Set<Integer> set = new HashSet<>();
+
+    static int basic_min, basic_pay, extra_min, extra_pay;
+    static int idx = 0;
+
     public int[] solution(int[] fees, String[] records) {
-        for(int i=0; i<records.length; i++) {
-            String[] arr = records[i].split(" ");
-            cal(arr);
-        }
-        
-        List<String> list = new ArrayList<>(carNumbers); 
+        // map.clear(); info.clear(); set.clear(); idx = 0;
+
+        basic_min = fees[0];
+        basic_pay = fees[1];
+        extra_min = fees[2];
+        extra_pay = fees[3];
+
+        for (String s : records) parking(s.split(" "));
+
+        List<Integer> list = new ArrayList<>(set);
         Collections.sort(list);
         int[] answer = new int[list.size()];
-        
-        for(int i=0; i<list.size(); i++) {            
-            int time = map.getOrDefault(list.get(i), 0);
-            int bucket = info.getOrDefault(list.get(i), -1);
-            if(bucket >= 0) {
-                time += calLastTime(bucket);
-            }
-            answer[i] = timeToMoney(fees, time);
+
+        for (int num : list) {
+            pay(num, answer);
         }
-        
         return answer;
     }
-    
-    public void cal(String[] arr) {
-        String carNum = arr[1];
-        int time = StringToTime(arr[0]);
-        if(arr[2].equals("IN")) {
-            info.put(carNum, time);
-            carNumbers.add(carNum);
+
+    public void pay(int num, int[] answer) {
+        int time = map.getOrDefault(num, 0);
+        if (info.containsKey(num)) {
+            time += 23 * 60 + 59 - info.get(num);
+        }
+        answer[idx++] = cal(time);
+    }
+
+    public int cal(int time) {
+        if (time <= basic_min) return basic_pay;
+        int extra = time - basic_min;
+        int units = (extra + extra_min - 1) / extra_min; // 올림
+        return basic_pay + units * extra_pay;
+    }
+
+    public void parking(String[] arr) {
+        int time = StringToInt(arr[0]);
+        int num = Integer.parseInt(arr[1]);
+        String io = arr[2];
+
+        if (io.equals("IN")) {
+            info.put(num, time);
+            set.add(num);
         } else {
-            int inTime = info.get(carNum);
-            info.remove(carNum);
-            time -= inTime;
-            map.put(carNum, map.getOrDefault(carNum, 0) + time);
+            time -= info.get(num);
+            info.remove(num);
+            map.put(num, map.getOrDefault(num, 0) + time);
+            set.add(num);
         }
     }
-    //기본시간, 기본요금, 단위시간, 단위요금
-    public int timeToMoney(int[] fees, int time) {
-        int money = 0;
-        if(time > fees[0]) {
-            time -= fees[0];
-            money += fees[1];
-        } else {
-            return fees[1];
-        }
-        
-        time = time%fees[2] > 0 ? time/fees[2]+1 : time/fees[2];
-        money += time * fees[3];
-        
-        return money;
-    }
-    
-    public int StringToTime(String s) {
+
+    public int StringToInt(String s) {
         String[] arr = s.split(":");
-        return Integer.parseInt(arr[0]) * 60 + Integer.parseInt(arr[1]);
-    }
-    
-    public int calLastTime(int n) {
-        int time = 23*60 + 59;
-        time -= n;
-        return time;
+        int h = Integer.parseInt(arr[0]) * 60;
+        int m = Integer.parseInt(arr[1]);
+        return h + m;
     }
 }
