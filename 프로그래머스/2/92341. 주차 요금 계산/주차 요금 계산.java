@@ -8,7 +8,6 @@ class Solution {
     static int idx = 0;
 
     public int[] solution(int[] fees, String[] records) {
-        // map.clear(); info.clear(); set.clear(); idx = 0;
 
         basic_min = fees[0];
         basic_pay = fees[1];
@@ -38,7 +37,7 @@ class Solution {
     public int cal(int time) {
         if (time <= basic_min) return basic_pay;
         int extra = time - basic_min;
-        int units = (extra + extra_min - 1) / extra_min; // 올림
+        int units = (extra + extra_min - 1) / extra_min;
         return basic_pay + units * extra_pay;
     }
 
