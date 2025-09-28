@@ -1,44 +1,48 @@
-import java.util.*;
+import java.util.HashSet;
+
 class Solution {
-    static int answer = 0;
-    static HashMap<Integer, Boolean> map = new HashMap<>();
+    private int answer = 0;
+    private HashSet<Integer> seenNums = new HashSet<>();
+
     public int solution(String numbers) {
-        String[] arr = numbers.split(""); 
+        String[] digits = numbers.split(""); 
         
-        for(int i=1; i<=numbers.length(); i++) {            
-            per(arr, new String[i], 0, new boolean[arr.length]);
+        for (int i = 1; i <= numbers.length(); i++) {            
+            permute(digits, new String[i], 0, new boolean[digits.length]);
         }
         
         return answer;
     }
     
-    public void per(String[] arr, String[] sel, int idx, boolean[] v) {
-        if(idx == sel.length) {
-            String s = "";
-            for(String a : sel) s+=a;
-            int n = Integer.parseInt(s);
-            
-            if(map.get(n) == null) {
-                if(isPrime(n)) answer++;
-                map.put(n, true);
-            }            
+    public void permute(String[] digits, String[] sel, int depth, boolean[] visited) {
+        if (depth == sel.length) {
+            int num = Integer.parseInt(String.join("", sel));
+            if (!seenNums.contains(num)) {
+                seenNums.add(num);
+                if (isPrime(num)) {
+                    answer++;
+                }
+            }
             return;
         }
         
-        for(int i=0; i<arr.length; i++) {
-            if(!v[i]) {
-                v[i] = true;
-                sel[idx] = arr[i];
-                per(arr, sel, idx+1, v);
-                v[i] = false;
+        for (int i = 0; i < digits.length; i++) {
+            if (!visited[i]) {
+                visited[i] = true;
+                sel[depth] = digits[i];
+                permute(digits, sel, depth + 1, visited);
+                visited[i] = false;
             }
         }
     }
     
-    public boolean isPrime(int n) {     
-        if(n < 2) return false;
-        for(int i=2; i<=Math.sqrt(n); i++) {
-            if(n%i == 0) return false;
+    private boolean isPrime(int num) {     
+        if (num < 2) return false;
+        if (num == 2) return true;
+        if (num % 2 == 0) return false;
+        
+        for (int i = 3; i <= Math.sqrt(num); i += 2) {
+            if (num % i == 0) return false;
         }
         return true;
     }
