@@ -1,8 +1,8 @@
 import java.util.HashSet;
 
 class Solution {
-    private int answer = 0;
-    private HashSet<Integer> seenNums = new HashSet<>();
+    static int answer = 0;
+    static HashSet<Integer> seenNums = new HashSet<>();
 
     public int solution(String numbers) {
         String[] digits = numbers.split(""); 
@@ -36,7 +36,7 @@ class Solution {
         }
     }
     
-    private boolean isPrime(int num) {     
+    public boolean isPrime(int num) {     
         if (num < 2) return false;
         if (num == 2) return true;
         if (num % 2 == 0) return false;
