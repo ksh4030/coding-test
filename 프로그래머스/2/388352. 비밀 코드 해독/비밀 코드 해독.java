@@ -3,7 +3,6 @@ class Solution {
     static int answer = 0;
     public int solution(int n, int[][] q, int[] ans) {        
         comb(1, 5, n, new ArrayList<>(), q, ans);
-        
         return answer;
     }
     
