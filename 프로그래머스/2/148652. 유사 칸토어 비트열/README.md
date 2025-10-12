@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 74.6 MB, 시간: 5590.59 ms
+메모리: 70.4 MB, 시간: 0.03 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 09월 05일 23:17:01
+2025년 10월 12일 23:39:15
 
 ### 문제 설명
 
@@ -41,8 +41,8 @@
 <li>1 ≤ <code>l</code>, <code>r</code> ≤ 5<sup><code>n</code></sup>
 
 <ul>
-<li>l ≤ <code>r</code> &lt; <code>l</code> + 10,000,000</li>
-<li><code>l</code>과 <code>r</code>은 비트열에서의 인덱스(1-base)이며 폐구간 [l, r]을 나타냅니다.</li>
+<li><code>l</code> ≤ <code>r</code> &lt; <code>l</code> + 10,000,000</li>
+<li><code>l</code>과 <code>r</code>은 비트열에서의 인덱스(1-base)이며 폐구간 <code>[l, r]</code>을 나타냅니다.</li>
 </ul></li>
 </ul>
 
