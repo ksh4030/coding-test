@@ -12,6 +12,10 @@ class Solution {
         int answer = 0;
         init(land);
         
+        for(int[] a : area) {
+            System.out.println(Arrays.toString(a));
+        }
+        
         for(int i=0; i<area[0].length; i++) {
             answer = Math.max(findMax(i), answer);
         }
