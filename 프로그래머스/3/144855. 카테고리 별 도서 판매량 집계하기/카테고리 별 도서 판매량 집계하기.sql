@@ -1,6 +1,6 @@
-select b.category, sum(bs.sales) as total_sales
-from book_sales bs
-join book b on bs.book_id = b.book_id
-where date_format(bs.sales_date, "%Y-%m") = '2022-01'
-group by b.category
-order by category
+select a.category, sum(b.sales) as total_sales
+from book a
+join book_sales b on a.book_id = b.book_id
+where month(b.sales_date) = 1
+group by a.category
+order by a.category
