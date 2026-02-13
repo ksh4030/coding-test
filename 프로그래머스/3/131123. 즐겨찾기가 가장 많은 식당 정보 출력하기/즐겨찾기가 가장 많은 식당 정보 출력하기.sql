@@ -5,5 +5,4 @@ where (food_type, favorites) in (
     from rest_info
     group by food_type
 )
-order by food_type desc
-;
+order by food_type desc;
