@@ -1,8 +1,7 @@
--- 코드를 작성해주세요
-select e.id, (
-    select count(se.id)
-    from ecoli_data se
-    where e.id = se.parent_id
-) as child_count 
-from ecoli_data e
-order by id;
+select a.id, (
+    select count(b.id)
+    from ecoli_data b
+    where a.id = b.parent_id
+) as child_count
+from ecoli_data a
+order by a.id
