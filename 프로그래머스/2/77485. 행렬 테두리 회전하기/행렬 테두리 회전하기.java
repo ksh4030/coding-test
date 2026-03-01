@@ -1,84 +1,67 @@
 import java.util.*;
 class Solution {
     static int[][] board;
-    static Deque<Integer> dq;
-    
     public int[] solution(int rows, int columns, int[][] queries) {
         int[] answer = new int[queries.length];
-        board = new int[rows][columns];
-        makeBoard(rows, columns);
         
+        init(rows, columns);
         for(int i=0; i<queries.length; i++) {
-            answer[i] = getMinNum(queries[i]);
+            answer[i] = rotation(queries[i]);
         }
-        // Arrays.sort(answer);
+        
         return answer;
     }
     
-    public static int getMinNum(int[] arr) {
-        int minNum = Integer.MAX_VALUE;
-        int[] target = new int[arr.length];
-        for(int i=0; i<arr.length; i++) {
-            target[i] = arr[i]-1;
+    public int rotation(int[] arr) {
+        int min = Integer.MAX_VALUE;
+        int cur = board[arr[0]][arr[1]];
+        int next = 0;
+        
+        for(int i=arr[1]; i<arr[3]; i++) {
+            min = Math.min(min, cur);
+            next = board[arr[0]][i+1];
+            board[arr[0]][i+1] = cur;
+            cur = next;
         }
         
-        dq = new ArrayDeque<>();
-        getNum(target);
-        dq.addFirst(dq.pollLast());
-        // System.out.println(dq);
-        int num = setNum(target);
-        return num;
-    }
-    
-    public static void getNum(int[] arr) {
-        for(int i=arr[1]; i<=arr[3]; i++) {
-            dq.add(board[arr[0]][i]);
-        }
-        for(int i=arr[0]+1; i<=arr[2]; i++) {
-            dq.add(board[i][arr[3]]);
-        }
-        for(int i=arr[3]-1; i>=arr[1]; i--) {
-            dq.add(board[arr[2]][i]);
-        }
-        for(int i=arr[2]-1; i>arr[0]; i--) {
-            dq.add(board[i][arr[1]]);
-        }
-    }
-    
-    public static int setNum(int[] arr) {
-        int minNum = Integer.MAX_VALUE;
-        int n = 0;
-        for(int i=arr[1]; i<=arr[3]; i++) {
-            n = dq.poll();
-            minNum = Math.min(n, minNum);
-            board[arr[0]][i] = n;
-        }
-        for(int i=arr[0]+1; i<=arr[2]; i++) {
-            n = dq.poll();
-            minNum = Math.min(n, minNum);
-            board[i][arr[3]] = n;
-        }
-        for(int i=arr[3]-1; i>=arr[1]; i--) {
-            n = dq.poll();
-            minNum = Math.min(n, minNum);
-            board[arr[2]][i] = n;
-        }
-        for(int i=arr[2]-1; i>arr[0]; i--) {
-            n = dq.poll();
-            minNum = Math.min(n, minNum);
-            board[i][arr[1]] = n;
+        for(int i=arr[0]; i<arr[2]; i++) {
+            min = Math.min(min, cur);
+            next = board[i+1][arr[3]];
+            board[i+1][arr[3]] = cur;
+            cur = next;
         }
         
-        return minNum;
+        for(int i=arr[3]; i>arr[1]; i--) {
+            min = Math.min(min, cur);
+            next = board[arr[2]][i-1];
+            board[arr[2]][i-1] = cur;
+            cur = next;
+        }
+        
+        for(int i=arr[2]; i>arr[0]; i--) {
+            min = Math.min(min, cur);
+            next = board[i-1][arr[1]];
+            board[i-1][arr[1]] = cur;
+            cur = next;
+        }
+        
+        // for(int[] b : board) {
+        //     System.out.println(Arrays.toString(b));
+        // }
+        // System.out.println(cur);
+        // System.out.println(next);
+        
+        return min;
     }
     
-    public static void makeBoard(int row, int col) {
+    public void init(int rows, int columns) {
+        board = new int[rows+1][columns+1];
         int num = 1;
-        for(int i=0; i<row; i++) {
-            for(int j=0; j<col; j++) {
+        
+        for(int i=1; i<=rows; i++) {
+            for(int j=1; j<=columns; j++) {
                 board[i][j] = num++;
             }
         }
     }
-    
 }
