@@ -8,4 +8,3 @@ where (category, price) in (
     group by category
 )
 order by max_price desc;
-
