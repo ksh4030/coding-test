@@ -1,51 +1,53 @@
 import java.util.*;
 class Solution {
-    static int[][] tired = {{1,1,1}, {5,1,1}, {25,5,1}};
+    static int[][] board = {
+        {1, 1, 1},
+        {5, 1, 1},
+        {25, 5, 1}
+    };
     static int answer = Integer.MAX_VALUE;
     public int solution(int[] picks, String[] minerals) {
-        dfs(0,0, picks, minerals);
+        dfs(0, 0, picks, minerals);
+        
         return answer;
     }
     
     public void dfs(int idx, int sum, int[] picks, String[] minerals) {
-        if(idx >= minerals.length) {
-            answer = Math.min(sum, answer);
+        if(idx >= minerals.length || Arrays.stream(picks).sum() == 0) {
+            answer = Math.min(answer, sum);
             return;
         }
         
-        if(Arrays.stream(picks).sum() == 0) {
-            answer = Math.min(sum, answer);
-            return;
-        }
-        
-        for(int i=0; i<3; i++) {
+        for(int i=0; i<picks.length; i++) {
             if(picks[i] > 0) {
                 picks[i]--;
-                int n = cal(idx, idx+5>=minerals.length ? minerals.length : idx+5, minerals, i);
-                dfs(idx+5, sum+n, picks, minerals);
+                if(idx+5 >= minerals.length) {
+                    dfs(idx+5, sum + cal(i, idx, minerals.length, minerals), picks, minerals);
+                } else {
+                    dfs(idx+5, sum + cal(i, idx, idx+5, minerals), picks, minerals);
+                }
                 picks[i]++;
             }
         }
+        
+        return;
     }
     
-    public int cal(int start, int end, String[] minerals, int cur) {
+    public int cal(int pick, int start, int end, String[] minerals) {
         int sum = 0;
-        
         for(int i=start; i<end; i++) {
-            switch(minerals[i]) {
-                case "diamond" :
-                    sum += tired[cur][0];
-                    break;
-                case "iron" :
-                    sum += tired[cur][1];
-                    break;
-                case "stone" :
-                    sum += tired[cur][2];
-                    break;
+            int mine = 0;
+            if(minerals[i].equals("diamond")) {
+                mine = 0;
+            } else if (minerals[i].equals("iron")) {
+                mine = 1;
+            } else {
+                mine = 2;
             }
+            
+            sum += board[pick][mine];
         }
         
         return sum;
     }
-    
 }
