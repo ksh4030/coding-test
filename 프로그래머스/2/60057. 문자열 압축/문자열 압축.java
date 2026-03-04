@@ -1,30 +1,30 @@
+import java.util.*;
 class Solution {
     public int solution(String s) {
-        if(s.length() == 1) {
-            return 1;
-        }
         int answer = Integer.MAX_VALUE;        
         
-        for(int i=1; i<=s.length()/2; i++) {
+        for(int i=1; i<=s.length(); i++) {
             String cur = s.substring(0, i);
             int cnt = 1;
             String ans = "";
             
             for(int j=i; j<=s.length(); j+=i) {
-                String next = "";
+                String bucket = "";
                 
-                if(i+j > s.length()) {
-                    next = s.substring(j, s.length());
+                if(j+i >= s.length()) {
+                    bucket = s.substring(j, s.length());
                 } else {
-                    next = s.substring(j, i+j);
+                    bucket = s.substring(j, j+i);
                 }
                 
-                if(cur.equals(next)) {
+                if(cur.equals(bucket)) {
                     cnt++;
                 } else {
-                    if(cnt > 1) ans += Integer.toString(cnt);
+                    if(cnt > 1) {
+                        ans += String.valueOf(cnt);
+                    }
                     ans += cur;
-                    cur = next;
+                    cur = bucket;
                     cnt = 1;
                 }
             }
