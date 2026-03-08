@@ -7,8 +7,6 @@ class Solution {
             return o1[1] - o2[1];
         });
         
-        boolean[] used = new boolean[routes.length];
-        used[0] = true;
         int[] cur = routes[0];
         
         for(int i=1; i<routes.length; i++) {
