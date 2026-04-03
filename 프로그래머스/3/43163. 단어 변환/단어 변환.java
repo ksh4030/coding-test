@@ -1,22 +1,20 @@
 import java.util.*;
-
 class Solution {
+    static int answer = Integer.MAX_VALUE;
     static boolean[] v;
-    static int ans = Integer.MAX_VALUE;
     public int solution(String begin, String target, String[] words) {
-        int answer = 0;
-        
         v = new boolean[words.length];
         dfs(begin, target, words, 0);
         
-        return ans == Integer.MAX_VALUE ? 0 : ans;
+        return answer == Integer.MAX_VALUE ? 0 : answer;
     }
     
     public void dfs(String cur, String target, String[] words, int cnt) {
         if(cur.equals(target)) {
-            ans = Math.min(ans, cnt);
+            answer = Math.min(answer, cnt);
             return;
         }
+        if(cnt > answer) return;
         
         for(int i=0; i<words.length; i++) {
             if(!v[i] && isPossible(cur, words[i])) {
@@ -27,14 +25,12 @@ class Solution {
         }
     }
     
-    public boolean isPossible(String s, String words) {
+    public boolean isPossible(String cur, String diff) {
         int cnt = 0;
-        for(int i=0; i<s.length(); i++) {
-            if(s.charAt(i) != words.charAt(i)) {
-                cnt++;
-            }
+        for(int i=0; i<cur.length(); i++) {
+            if(cur.charAt(i) == diff.charAt(i)) cnt++;
         }
         
-        return cnt == 1;
+        return cnt + 1 == cur.length();
     }
 }
