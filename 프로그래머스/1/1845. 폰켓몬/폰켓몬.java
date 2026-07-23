@@ -2,9 +2,14 @@ import java.util.*;
 class Solution {
     public int solution(int[] nums) {
         int answer = 0;
-        Set<Integer> set = new HashSet<>();
-        for(int n : nums) set.add(n);        
-        answer = nums.length/2 > set.size() ? set.size() : nums.length/2;
-        return answer;
+        Map<Integer, Integer> map = new HashMap<>();
+        
+        for(int i=0; i<nums.length; i++) {
+            map.put(nums[i], map.getOrDefault(nums[i], 0) + 1);
+        }
+        
+        System.out.println(map);
+        
+        return map.size() > nums.length / 2 ? nums.length / 2 : map.size();
     }
 }
