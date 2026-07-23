@@ -2,25 +2,49 @@ import java.util.*;
 class Solution {
     public int[] solution(String[] gems) {
         int[] answer = new int[2];
-        int kind = new HashSet<>(Arrays.asList(gems)).size();
+        Map<String, Integer> stand = new HashMap<>();
         Map<String, Integer> map = new HashMap<>();
         
-        int len = Integer.MAX_VALUE;
-        int start = 0;
+        for(String s : gems) {
+            map.put(s, map.getOrDefault(s, 0) + 1);
+            stand.put(s, stand.getOrDefault(s, 0) + 1);
+        }
+        System.out.println(map);
+        int cnt = map.size() - 1;
+        int left = 0, right = 0;
+        int min = Integer.MAX_VALUE;
         
-        for(int end=0; end<gems.length; end++) {
-            map.put(gems[end], map.getOrDefault(gems[end], 0) + 1);
-            
-            while(map.get(gems[start]) > 1) {
-                map.put(gems[start], map.get(gems[start]) - 1);
-                start++;
+        map.put(gems[left], map.get(gems[left]) - 1);
+        System.out.println(map);
+        
+        while(left <= right) {
+            if(cnt == 0) {
+                if(right - left < min) {
+                    min = right - left;
+                    answer[0] = left+1;
+                    answer[1] = right+1;
+                }
+                map.put(gems[left], map.get(gems[left]) + 1);
+                int a = stand.get(gems[left]);
+                int b = map.get(gems[left]);
+                if(a == b) cnt++;
+                left++;
+            } else {
+                right++;
+                if(right >= gems.length) break;
+                            
+                map.put(gems[right], map.get(gems[right]) - 1);
+                int a = stand.get(gems[right]);
+                int b = map.get(gems[right]) + 1;
+                if(a == b) cnt--;
             }
             
-            if(map.size() == kind && len > (end - start)) {
-                len = end - start;
-                answer[0] = start + 1;
-                answer[1] = end + 1;
-            }
+            // System.out.println("============================");
+            // System.out.println(left);
+            // System.out.println(right);
+            // System.out.println(map);
+            // System.out.println(cnt);
+            // System.out.println("============================");
         }
         
         return answer;
