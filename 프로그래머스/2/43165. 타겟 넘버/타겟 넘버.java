@@ -1,21 +1,35 @@
 import java.util.*;
 class Solution {
-    static int cnt = 0;
+    static int answer = 0;
     public int solution(int[] numbers, int target) {
-        int answer = 0;
         
-        bt(0, 0, numbers, target, 0);
+        bfs(numbers, target);
         
-        return cnt;
+        return answer;
     }
     
-    public static void bt(int depth, int idx, int[] numbers, int target, int sum) {
-        if(depth == numbers.length) {
-            if(sum == target) cnt++;
-            return;
-        }
+    public void bfs(int[] numbers, int target) {
+        Queue<Node> q = new LinkedList<>();
+        q.add(new Node(0, 0));        
         
-        bt(depth+1, idx+1, numbers, target, sum + numbers[idx]);
-        bt(depth+1, idx+1, numbers, target, sum - numbers[idx]);
+        while(!q.isEmpty()) {
+            Node cur = q.poll();
+            
+            if(cur.idx == numbers.length) {
+                if(cur.sum == target) answer++;
+                continue;
+            }
+            
+            q.add(new Node(cur.sum + numbers[cur.idx], cur.idx+1));
+            q.add(new Node(cur.sum - numbers[cur.idx], cur.idx+1));
+        }
+    }
+    
+    class Node {
+        int sum, idx;
+        public Node(int sum, int idx) {
+            this.sum = sum;
+            this.idx = idx;
+        }
     }
 }
