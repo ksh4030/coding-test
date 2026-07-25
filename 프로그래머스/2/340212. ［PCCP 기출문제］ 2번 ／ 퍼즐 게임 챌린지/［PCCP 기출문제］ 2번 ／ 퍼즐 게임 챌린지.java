@@ -1,37 +1,33 @@
 import java.util.*;
 class Solution {
     public int solution(int[] diffs, int[] times, long limit) {
-        int left = 1;
-        int right = Arrays.stream(diffs).max().getAsInt();
-        int answer = right;
+        int first = 1;
+        int last = 100_000;
+        int answer = last;
         
-        while(left <= right) {
-            int mid = (left + right) / 2;
+        while(first <= last) {
+            int level = (first + last) / 2;
+            long time_total = 0;
+            long time_prev = 0;
             
-            if(isPossible(mid, diffs, times, limit)) {
-                answer = mid;
-                right = mid - 1;
+            for(int i=0; i<diffs.length; i++) {
+                if(diffs[i] > level) {
+                    time_total += times[i] + ((time_prev + times[i]) * (diffs[i] - level));
+                } else {
+                    time_total += times[i];
+                }
+                time_prev = times[i];
+                if(time_total > limit) break;
+            }
+            
+            if(time_total > limit) {
+                first = level + 1;
             } else {
-                left = mid + 1;
+                answer = Math.min(answer, level);
+                last = level - 1;
             }
         }
         
         return answer;
-    }
-    
-    public boolean isPossible(int mid, int[] diffs, int[] times, long limit) {
-        long sum = 0;
-        for(int i=0; i<diffs.length; i++) {
-            if(mid < diffs[i]) {
-                int cnt = diffs[i] - mid;
-                int time = i == 0 ? 0 : times[i] + times[i-1];
-                sum += (long)(cnt * time) + times[i];
-            } else {
-                sum += times[i];
-            }
-            
-            if(sum > limit) return false;
-        }
-        return true;
     }
 }
