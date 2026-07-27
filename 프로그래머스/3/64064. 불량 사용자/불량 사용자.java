@@ -1,43 +1,49 @@
 import java.util.*;
-
 class Solution {
-    Set<Set<String>> answerSet = new HashSet<>();
-
+    static boolean[] v;
+    static Set<List<String>> set = new HashSet<>();
     public int solution(String[] user_id, String[] banned_id) {
-        boolean[] visited = new boolean[user_id.length];
-        dfs(0, user_id, banned_id, visited, new HashSet<>());
-        return answerSet.size();
+        int answer = 0;
+        
+        v = new boolean[user_id.length];
+        dfs(user_id, banned_id, 0, new ArrayList<>());
+        
+        // System.out.println(set);
+        return set.size();
     }
-
-    void dfs(int depth, String[] user_id, String[] banned_id, boolean[] visited, Set<String> currentSet) {
-        if (depth == banned_id.length) {
-            // 조합을 복사하여 저장 (HashSet은 순서 상관 없이 동일한 요소면 중복 제거됨)
-            answerSet.add(new HashSet<>(currentSet));
+    
+    public void dfs(String[] user_id, String[] banned_id, int idx, List<String> list) {
+        if(idx >= banned_id.length) {
+            Collections.sort(list);
+            set.add(List.copyOf(list));
             return;
         }
-
-        for (int i = 0; i < user_id.length; i++) {
-            if (visited[i]) continue;
-            if (!isMatch(user_id[i], banned_id[depth])) continue;
-
-            visited[i] = true;
-            currentSet.add(user_id[i]);
-
-            dfs(depth + 1, user_id, banned_id, visited, currentSet);
-
-            visited[i] = false;
-            currentSet.remove(user_id[i]);
+        
+        for(int i=0; i<user_id.length; i++) {
+            if(!v[i] && isPossible(user_id[i], banned_id[idx])) {
+                v[i] = true;
+                list.add(user_id[i]);
+                dfs(user_id, banned_id, idx+1, list);
+                list.remove(user_id[i]);
+                v[i] = false;
+            }
         }
     }
-
-    boolean isMatch(String user, String ban) {
-        if (user.length() != ban.length()) return false;
-
-        for (int i = 0; i < user.length(); i++) {
-            if (ban.charAt(i) == '*') continue;
-            if (user.charAt(i) != ban.charAt(i)) return false;
+    
+    public boolean isPossible(String user, String target) {
+        if(user.length() != target.length()) return false;
+        for(int i=0; i<user.length(); i++) {
+            if(target.charAt(i) == '*') continue;
+            if(user.charAt(i) != target.charAt(i)) return false;
         }
-
+        
         return true;
+    }
+    
+    class Node {
+        int num;
+        public Node(int num) {
+            this.num = num;
+        }
     }
 }
