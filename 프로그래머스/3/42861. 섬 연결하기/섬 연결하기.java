@@ -1,44 +1,56 @@
 import java.util.*;
 class Solution {
-    static int[] parent;
     public int solution(int n, int[][] costs) {
-        init(n, costs);
-        return kruskal(n, costs);
-    }
-    
-    public void init(int n, int[][] costs) {
-        parent = new int[n];
-        for(int i=0; i<n; i++) parent[i] = i;
+        int answer = 0;
+        boolean[][] map = new boolean[n+1][n+1];
         
-        Arrays.sort(costs, (o1, o2) -> o1[2]-o2[2]);
-    }
-    
-    public int kruskal(int n, int[][] costs) {
-        int cnt = 0;
-        int cost = 0;
-        
+        Arrays.sort(costs, (o1, o2) -> {
+            return o1[2] - o2[2];
+        });
+                
         for(int[] arr : costs) {
-            if(union(arr[0], arr[1])) {
-                cost += arr[2];
-                cnt++;
-                if(cnt == n-1) break;
+            int r = arr[0];
+            int c = arr[1];
+            int cost = arr[2];
+            
+            if(!isPossible(n, r, c, map) && !map[r][c] && !map[c][r]) {
+                map[r][c] = true;
+                map[c][r] = true;
+                answer += cost;
             }
         }
         
-        return cost;
+        return answer;
     }
     
-    public boolean union(int num1, int num2) {
-        int r1 = find(num1);
-        int r2 = find(num2);
+    public boolean isPossible(int n, int r, int c, boolean[][] map) {
+        Queue<Integer> q = new LinkedList<>();
+        boolean[] v = new boolean[n];
         
-        if(r1 == r2) return false;
-        parent[r2] = r1;
-        return true;
+        q.add(r);
+        v[r] = true;
+        
+        while(!q.isEmpty()) {
+            int cur = q.poll();
+            if(cur == c) return true;
+            
+            for(int i=0; i<n; i++) {
+                if(map[cur][i] && !v[i]) {
+                    v[i] = true;
+                    q.add(i);
+                }
+            }
+        }
+        
+        return false;
     }
     
-    public int find(int num) {
-        if(parent[num] != num) parent[num] = find(parent[num]);
-        return parent[num];
+    class Node {
+        int r;
+        int c;
+        public Node(int r, int c) {
+            this.r = r;
+            this.c = c;
+        }
     }
 }
