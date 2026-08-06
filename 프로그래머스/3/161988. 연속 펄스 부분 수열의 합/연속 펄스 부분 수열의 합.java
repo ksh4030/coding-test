@@ -1,36 +1,40 @@
 import java.util.*;
 class Solution {
-    static int[] a, b;
+    static int[] arr1;
+    static int[] arr2;
     public long solution(int[] sequence) {
-        long answer = 0;
-        init(sequence);
-        answer = sw(a);        
-        return Math.max(answer, sw(b));
-    }
-    
-    public long sw(int[] arr) {
-        long sum = Integer.MIN_VALUE;
-        long max = 0;
+        arr1 = new int[sequence.length];
+        arr2 = new int[sequence.length];
         
-        for(int i=0; i<arr.length; i++) {
-            sum = Math.max(sum+arr[i], arr[i]);
-            max = Math.max(max, sum);
+        init(sequence);
+        
+        long answer = Math.max(arr1[0], arr2[0]);
+        long cur = arr1[0];
+        
+        for(int i=1; i<arr1.length; i++) {
+            cur = Math.max(cur + arr1[i], arr1[i]);
+            answer = Math.max(cur, answer);
         }
-        return max;
+        
+        cur = arr2[0];
+        for(int i=1; i<arr2.length; i++) {
+            cur = Math.max(cur + arr2[i], arr2[i]);
+            answer = Math.max(cur, answer);
+        }
+        
+        return answer;
     }
     
     public void init(int[] sequence) {
-        a = new int[sequence.length];
-        b = new int[sequence.length];
-        
-        for(int i=0; i<sequence.length; i++) {
+        for(int i=0; i<arr1.length; i++) {
             if(i%2 == 0) {
-                a[i] = sequence[i];
-                b[i] = sequence[i] * -1;
+                arr1[i] = sequence[i]*1;
+                arr2[i] = sequence[i]*-1;
             } else {
-                a[i] = sequence[i] * -1;
-                b[i] = sequence[i];
+                arr1[i] = sequence[i] * -1;
+                arr2[i] = sequence[i] * 1;
             }
+            
         }
     }
 }
