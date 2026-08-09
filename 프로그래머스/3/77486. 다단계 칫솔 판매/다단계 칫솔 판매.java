@@ -1,40 +1,39 @@
 import java.util.*;
 
 class Solution {
-    static Map<String, String> myParent = new HashMap<>();
-    static Map<String, Integer> money = new HashMap<>();
+
+    static Map<String, String> parents = new HashMap<>();
+    static Map<String, Integer> indexMap = new HashMap<>();
+    static int[] answer;
 
     public int[] solution(String[] enroll, String[] referral, String[] seller, int[] amount) {
-        int[] answer = new int[enroll.length];
-        init(enroll, referral);
+        answer = new int[enroll.length];
+        parents.clear();
+        indexMap.clear();
+
+        for (int i = 0; i < enroll.length; i++) {
+            parents.put(enroll[i], referral[i]);
+            indexMap.put(enroll[i], i);
+        }
 
         for (int i = 0; i < seller.length; i++) {
             distribute(seller[i], amount[i] * 100);
         }
 
-        for (int i = 0; i < enroll.length; i++) {
-            answer[i] = money.get(enroll[i]);
-        }
-
         return answer;
     }
 
-    // 판매 수익 분배 - 재귀 방식
-    public void distribute(String name, int income) {
-        if (name.equals("-") || income < 1) return;
+    public void distribute(String person, int money) {
 
-        int commission = income / 10;
-        int myShare = income - commission;
+        while (!person.equals("-") && money > 0) {
 
-        money.put(name, money.getOrDefault(name, 0) + myShare);
-        distribute(myParent.get(name), commission);
-    }
+            int give = money / 10;
+            int mine = money - give;
 
-    // 부모 관계 및 초기화
-    public void init(String[] enroll, String[] referral) {
-        for (int i = 0; i < enroll.length; i++) {
-            myParent.put(enroll[i], referral[i]);
-            money.put(enroll[i], 0);
+            answer[indexMap.get(person)] += mine;
+
+            person = parents.get(person);
+            money = give;
         }
     }
 }
