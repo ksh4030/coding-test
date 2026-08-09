@@ -4,28 +4,25 @@ class Solution {
         int answer = 0;
         
         Arrays.sort(jobs, (o1, o2) -> o1[0] - o2[0]);
-        PriorityQueue<int[]> waitpq = new PriorityQueue<>((o1, o2) -> o1[1]-o2[1]);
+        PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[1] - o2[1]);
         
-        int time = 0;
-        int cnt = 0;
         int idx = 0;
-        int sum = 0;
+        int time = 0;
         
-        while(cnt < jobs.length) {
-            while(idx < jobs.length && jobs[idx][0] <= time) {
-                waitpq.add(jobs[idx++]);
+        while(idx<jobs.length || !pq.isEmpty()) {
+            while(idx<jobs.length && time >= jobs[idx][0]) {
+                pq.add(jobs[idx++]);
             }
             
-            if(!waitpq.isEmpty()) {
-                int[] cur = waitpq.poll();
-                time += cur[1];
-                sum += time - cur[0];
-                cnt++;
-            } else {
+            if(pq.isEmpty()) {
                 time = jobs[idx][0];
+            } else {
+                int[] cur = pq.poll();
+                time += cur[1];
+                answer += time - cur[0];
             }
         }
         
-        return sum / jobs.length;
+        return answer/jobs.length;
     }
 }
