@@ -5,32 +5,32 @@ class Solution {
         int left = 0;
         int right = 200_000_000;
         
-        while(left <= right) {
-            int mid = (left + right) / 2;
+        while(left<=right) {
+            int mid = (left+right)/2;
+            int cnt = 0;
+            boolean flag = true;
             
-            if(isPossible(stones, mid, k)) {
-                answer = mid;
-                left = mid + 1;
+            for(int i=0; i<stones.length; i++) {
+                if(stones[i] - mid < 0) {
+                    cnt++;
+                } else {
+                    cnt = 0;
+                }
+                
+                if(cnt >= k) {
+                    flag = false;
+                    break;
+                }
+            }
+            
+            if(flag) {
+                answer = Math.max(mid, answer);
+                left = mid+1;
             } else {
-                right = mid - 1;
+                right = mid-1;
             }
         }        
         
         return answer;
-    }
-    
-    public boolean isPossible(int[] stones, int mid, int k) {
-        int cnt = 0;
-        
-        for(int i=0; i<stones.length; i++) {
-            if(stones[i] < mid) {
-                cnt++;
-                if(cnt >= k) return false;
-            } else {
-                cnt = 0;
-            }
-        }
-        
-        return true;
     }
 }
