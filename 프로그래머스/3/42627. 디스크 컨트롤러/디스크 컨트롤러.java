@@ -10,16 +10,16 @@ class Solution {
         int time = 0;
         
         while(idx<jobs.length || !pq.isEmpty()) {
-            while(idx<jobs.length && time >= jobs[idx][0]) {
+            while(idx < jobs.length && time >= jobs[idx][0]) {
                 pq.add(jobs[idx++]);
             }
             
             if(pq.isEmpty()) {
                 time = jobs[idx][0];
             } else {
-                int[] cur = pq.poll();
-                time += cur[1];
-                answer += time - cur[0];
+                int[] tmp = pq.poll();
+                time += tmp[1];
+                answer += time - tmp[0];                
             }
         }
         
